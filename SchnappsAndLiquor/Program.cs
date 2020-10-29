@@ -1,4 +1,5 @@
 ﻿using System;
+using SchnappsAndLiquor.Game;
 
 namespace SchnappsAndLiquor
 {
@@ -6,7 +7,7 @@ namespace SchnappsAndLiquor
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Game.Game oGame = new Game.Game();
         }
     }
 }
