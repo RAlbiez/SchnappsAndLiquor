@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -7,7 +8,9 @@ namespace SchnappsAndLiquor.Game
 {
     public interface IField
     {
+        [JsonIgnore]
         Guid gKey { get; set; }
+        [JsonIgnore]
         bool bCanAppearMulitpleTimes { get; set; }
         string sText { get; set; }
         short shtBoardPos { get; set; }

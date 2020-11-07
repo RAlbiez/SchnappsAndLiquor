@@ -7,18 +7,25 @@ using Newtonsoft.Json;
 
 namespace SchnappsAndLiquor.Net
 {
-    class Connection
+    public class Connection
     {
-        List<Socket> oAllConnections = new List<Socket>();       
+        Dictionary<Guid, Socket> oAllConnections = new Dictionary<Guid, Socket>();       
 
         public void SendGameToEveryone(Game.Game oGame)
         {
-            foreach(Socket oSocket in oAllConnections)
+            string sGameData = JsonConvert.SerializeObject(oGame);
+            byte[] oSendData = Encoding.UTF8.GetBytes(sGameData);
+            foreach (Socket oSocket in oAllConnections.Values)
             {
-                oSocket.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(oGame)));
+                SocketAsyncEventArgs oSocketArgs = new SocketAsyncEventArgs();
+                oSocketArgs.SetBuffer(oSendData);
+                oSocket.SendAsync(oSocketArgs);
             }
         }
 
+        public void AcceptConnections()
+        {
 
+        }
     }
 }

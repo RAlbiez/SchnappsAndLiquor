@@ -3,7 +3,7 @@ namespace SchnappsAndLiquor.Game
 {
     public class Board
     {
-        IField[] oFields = new IField[GameParams.MAX_FIELDS];
+        public IField[] oFields = new IField[GameParams.MAX_FIELDS];
 
         public IField this[short pos]
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using SchnappsAndLiquor.Game;
+using SchnappsAndLiquor.Net;
 
 namespace SchnappsAndLiquor
 {
@@ -7,7 +8,10 @@ namespace SchnappsAndLiquor
     {
         static void Main(string[] args)
         {
-            Game.Game oGame = new Game.Game();
+            Connection oConnection = new Connection();
+            Game.Game oGame = new Game.Game(oConnection);
+
+            new Connection().SendGameToEveryone(oGame);
         }
     }
 }

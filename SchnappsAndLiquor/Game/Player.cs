@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace SchnappsAndLiquor.Game
     public class Player
     {
         public string sName;
+        [JsonIgnore]
         public Guid gPlayerID;
         public short shtBoardPosition = 0;
 

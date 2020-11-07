@@ -8,7 +8,7 @@ namespace SchnappsAndLiquor.Game
 {
     public class PlayerList :IEnumerable<Player>
     {
-        private List<Player> oList = new List<Player>();
+        public List<Player> oList = new List<Player>();
 
         public Player this[short shtCurrentPlayerP]
         {

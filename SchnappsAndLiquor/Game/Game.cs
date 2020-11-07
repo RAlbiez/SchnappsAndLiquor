@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchnappsAndLiquor.Net;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
@@ -7,12 +8,15 @@ namespace SchnappsAndLiquor.Game
 {
     public class Game
     {
-        private Board oBoard = new Board();
+        public Board oBoard = new Board();
         public PlayerList oPlayers = new PlayerList();
-        private short shtCurrentPlayer = 0;
+        public short shtCurrentPlayer = 0;
 
-        public Game()
+        private Connection oConnection;
+
+        public Game(Connection oConnectionP)
         {
+            oConnection = oConnectionP;
             this.InitBoard();
         }
 
