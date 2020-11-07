@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace SchnappsAndLiquor.Game
 {
-    public class PlayerList
+    public class PlayerList :IEnumerable<Player>
     {
         private List<Player> oList = new List<Player>();
 
@@ -23,5 +24,15 @@ namespace SchnappsAndLiquor.Game
         public Player GetByID(Guid gPlayerIDP) => this.oList.Where(x => x.gPlayerID == gPlayerIDP).FirstOrDefault();
 
         public Player GetByName(string sNameP) => this.oList.Where(x => x.sName == sNameP).FirstOrDefault();
+
+        public IEnumerator<Player> GetEnumerator()
+        {
+            return ((IEnumerable<Player>)oList).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.oList.GetEnumerator();
+        }
     }
 }

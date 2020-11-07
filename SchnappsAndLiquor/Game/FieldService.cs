@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace SchnappsAndLiquor.Game
@@ -11,7 +12,7 @@ namespace SchnappsAndLiquor.Game
         string sText { get; set; }
         short shtBoardPos { get; set; }
         void Init(Game oGame, short shtPos);
-        void Action(Guid gPlayerId, Game oGame);
+        (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame);
     }
 
 

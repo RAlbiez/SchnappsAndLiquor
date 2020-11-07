@@ -8,7 +8,7 @@ namespace SchnappsAndLiquor.Game
     public class Game
     {
         private Board oBoard = new Board();
-        private PlayerList oPlayers = new PlayerList();
+        public PlayerList oPlayers = new PlayerList();
         private short shtCurrentPlayer = 0;
 
         public Game()
@@ -28,7 +28,12 @@ namespace SchnappsAndLiquor.Game
 
         protected void ActivateField(Guid gPlayerID, short shtFieldNumber)
         {
-            this.oBoard[shtFieldNumber].Action(gPlayerID, this);
+            var oReturn = this.oBoard[shtFieldNumber].FieldAction(gPlayerID, this);
+
+            if(oReturn.oChoice != null)
+            {
+
+            }
         }
 
         public void MovePlayerBy(short shtPlayerNumber, short shtNumOfFields)

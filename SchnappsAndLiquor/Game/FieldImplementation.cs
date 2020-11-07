@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SchnappsAndLiquor.Game
@@ -10,7 +11,8 @@ namespace SchnappsAndLiquor.Game
         {
             typeof(MoveBackByField),
             typeof(DrinkField),
-            typeof(DrinkAndMoveField)
+            typeof(DrinkAndMoveField),
+            typeof(SwapPositionField)
         };
 
         public static IField GetRandomField()
@@ -41,9 +43,8 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = 0;
         }
 
-        public void Action(Guid gPlayerID, Game oGame)
-        {
-        }
+        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame) => (null, null);
+
     }
 
     public class FinishField : IField
@@ -66,9 +67,11 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = (short)(GameParams.MAX_FIELDS-1);
         }
 
-        public void Action(Guid gPlayerID, Game oGame)
+        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame)
         {
             oGame.WinGame(gPlayerID);
+
+            return (null, null);
         }
     }
 
@@ -98,9 +101,11 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public void Action(Guid gPlayerID, Game oGame)
+        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame)
         {
             oGame.MovePlayerBy(gPlayerID, shtNumberToMove);
+
+            return (null, null);
         }
     }
 
@@ -129,9 +134,11 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public void Action(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
         {
             oGame.AddPointsToPlayer(gPlayerId, shtNumberToDrink);
+
+            return (null, null);
         }
     }
 
@@ -163,10 +170,69 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public void Action(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
         {
             oGame.AddPointsToPlayer(gPlayerId, shtNumberToDrink);
             oGame.MovePlayerBy(gPlayerId, shtNumberToMove);
+
+            return (null, null);
+        }
+    }
+
+    public class SwapPositionField : IField
+    {
+        private List<string> oReasons = new List<string>()
+        {
+            "Tausche die Position mit einem beliebigem Spiel, ihr trinkt beide {0}"
+        };
+
+        public Guid gKey { get; set; }
+        public bool bCanAppearMulitpleTimes { get; set; }
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+
+        private short shtNumberToDrink;
+        private short shtSkipCost;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 4);
+
+            string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+
+            shtSkipCost = 3;
+            gKey = Guid.NewGuid();
+            bCanAppearMulitpleTimes = false;
+            sText = String.Format(sTextToUse, shtNumberToDrink);
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game,Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        {
+            var oPlayerList = oGame.oPlayers as IEnumerable<Player>;
+
+            return (new Choice(oPlayerList.Select(x => x.sName), oGame.oPlayers.GetByID(gPlayerId).sName, true, shtSkipCost), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, Answer oAnswer)
+        {
+            if (!oAnswer.bSkipped)
+            {
+                var oFirstPlayer = oGame.GetCurentPlayer();
+                var oSecondPlayer = oGame.oPlayers.GetByName(oAnswer.sAnswer);
+
+                oFirstPlayer.AddPoints(shtNumberToDrink);
+                oSecondPlayer.AddPoints(shtNumberToDrink);
+
+                var t = oFirstPlayer.shtBoardPosition;
+
+                oFirstPlayer.shtBoardPosition = oSecondPlayer.shtBoardPosition;
+                oSecondPlayer.shtBoardPosition = t;
+            }
+            else
+            {
+                oGame.GetCurentPlayer().AddPoints(-1 * shtSkipCost);
+            }
         }
     }
 }

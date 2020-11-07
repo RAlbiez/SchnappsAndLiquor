@@ -8,9 +8,9 @@ namespace SchnappsAndLiquor.Game
     {
         public string sName;
         public Guid gPlayerID;
-        short shtBoardPosition = 0;
+        public short shtBoardPosition = 0;
 
-        long lngPoints = 0;
+        public long lngPoints = 0;
 
 
         public Player(string sNameP)
