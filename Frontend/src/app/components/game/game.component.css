@@ -1,0 +1,12 @@
+.field {
+    margin: 5px;
+    padding: 5px;
+    display: inline-block;
+    background-color: antiquewhite;
+    width: 200px;
+    height: 100px;
+    border: 1px solid black;
+}
+
+.text {
+}

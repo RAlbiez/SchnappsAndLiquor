@@ -1,0 +1,14 @@
+<div *ngIf="!connection.connected">
+  <div *ngIf="connection.error">
+    Sumtings wong...
+  </div>
+  <div *ngIf="!connection.error">
+    Connecting...
+  </div>
+</div>
+
+<div *ngIf="connection.connected">
+  <app-splash-screen *ngIf="!connection.gameState"></app-splash-screen>
+  <app-game *ngIf="connection.gameState"></app-game>
+</div>
+

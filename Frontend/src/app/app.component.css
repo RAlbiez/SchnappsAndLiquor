@@ -1,0 +1,8 @@
+.field {
+    display: inline-block;
+    background-color: antiquewhite;
+    width: 200px;
+    height: 100px;
+    line-height: 0%;
+    border: 1px solid black;
+}
