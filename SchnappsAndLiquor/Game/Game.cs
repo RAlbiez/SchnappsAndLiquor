@@ -11,12 +11,10 @@ namespace SchnappsAndLiquor.Game
         public Board oBoard = new Board();
         public PlayerList oPlayers = new PlayerList();
         public short shtCurrentPlayer = 0;
+        public string sGameId = "";
 
-        private Connection oConnection;
-
-        public Game(Connection oConnectionP)
+        public Game()
         {
-            oConnection = oConnectionP;
             this.InitBoard();
         }
 
@@ -95,6 +93,11 @@ namespace SchnappsAndLiquor.Game
         public void AddPlayer(string sNameP)
         {
             this.oPlayers.Add(new Player(sNameP));
+        }
+
+        public void HandleClientAction(ClientAction action)
+        {
+            // tu die dinge
         }
     }
 
