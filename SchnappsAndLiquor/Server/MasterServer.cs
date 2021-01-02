@@ -7,7 +7,7 @@ using System.Text;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SchnappsAndLiquor.Server
 {
@@ -99,7 +99,7 @@ namespace SchnappsAndLiquor.Server
         public void PushGameState(string id)
         {
             if (!this.oGames.ContainsKey(id)) { return; }
-            var state = JsonConvert.SerializeObject(this.oGames[id]);
+            var state = JsonSerializer.Serialize(this.oGames[id]);
             foreach (var c in this.oConnections[id])
             {
                 c.SendData(state);

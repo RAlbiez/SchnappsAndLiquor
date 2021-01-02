@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using WebSocketSharp;
 using WebSocketSharp.Server;
-using Newtonsoft.Json;
 using SchnappsAndLiquor.Net;
+using System.Text.Json;
 
 namespace SchnappsAndLiquor.Server
 {
@@ -27,7 +27,7 @@ namespace SchnappsAndLiquor.Server
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            var action = JsonConvert.DeserializeObject<ClientAction>(e.Data);
+            var action = JsonSerializer.Deserialize<ClientAction>(e.Data);
             if (action.Type == "ClientCreateLobby")
             {
                 this.sName = action.GetFirst("name");
