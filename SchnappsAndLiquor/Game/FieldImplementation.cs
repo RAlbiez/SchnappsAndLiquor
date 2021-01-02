@@ -116,8 +116,8 @@ namespace SchnappsAndLiquor.Game
         private List<(string sTextToUse,short shtMinRange,short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Beleidige einen Mittrinker deiner Wahl. Trink {0} Schluck.", 1,3),
-            ("Trink {0] und behalt sie im Mund bis du wieder an der Reihe bist.", 1,3),
-            ("Schick dein letztes Bild an eine beliebige WhatsApp Gruppe und trink {0]", 1,3),
+            ("Trink {0} und behalt sie im Mund bis du wieder an der Reihe bist.", 1,3),
+            ("Schick dein letztes Bild an eine beliebige WhatsApp Gruppe und trink {0}", 1,3),
             ("Trink {0} und geh eine Runde auf die stille Treppe", 1, 3)
         };
 
@@ -132,7 +132,7 @@ namespace SchnappsAndLiquor.Game
         {
             var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
             shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
-            
+
 
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;

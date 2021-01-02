@@ -1,0 +1,22 @@
+<div>
+    <div class="frame">
+        Spielername
+        <input type="text" [(value)]="playerName">
+    </div>
+    <div class="frame side">
+        <div class="frame">
+            <p>Eigenes spiel</p>
+            <button (click)="createLobby()">
+                mache spiel
+            </button>
+        </div>
+        <div class="frame">
+            Empfangsraumkennung
+            <input type="text" [(value)]="gameCode">
+            <br>
+            <button (click)="joinGame()">
+                trete spiel
+            </button>
+        </div>
+    </div>
+</div>
