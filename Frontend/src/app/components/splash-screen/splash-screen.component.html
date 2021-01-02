@@ -1,7 +1,7 @@
 <div>
     <div class="frame">
         Spielername
-        <input type="text" [(value)]="playerName">
+        <input type="text" [(ngModel)]="playerName">
     </div>
     <div class="frame side">
         <div class="frame">
@@ -12,7 +12,7 @@
         </div>
         <div class="frame">
             Empfangsraumkennung
-            <input type="text" [(value)]="gameCode">
+            <input type="text" [(ngModel)]="gameCode">
             <br>
             <button (click)="joinGame()">
                 trete spiel

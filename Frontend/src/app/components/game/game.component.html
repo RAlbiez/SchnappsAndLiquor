@@ -1,5 +1,18 @@
+<div>
+  <div>
+    Interessenvertretung Identifikation:
+    <b>{{ connection.gameState.sGameId }}</b>
+  </div>
+  Spielerliste:
+  <div *ngFor="let i of connection.gameState.oPlayers">
+    <b>{{ i.sName }}</b>
+     {{ i.lngPoints }}
+  </div>
+</div>
+
 <div *ngFor="let i of connection.gameState.oBoard.oFields" class="field">
     <div class="text">
         {{ i.sText }}
     </div>
 </div>
+
