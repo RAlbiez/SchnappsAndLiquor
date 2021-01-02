@@ -12,6 +12,8 @@ namespace SchnappsAndLiquor.Game
         Guid gKey { get; set; }
         [JsonIgnore]
         bool bCanAppearMulitpleTimes { get; set; }
+        bool bIsStartPoint { get; set; }
+        bool bIsEndPoint { get; set; }
         string sText { get; set; }
         short shtBoardPos { get; set; }
         void Init(Game oGame, short shtPos);
