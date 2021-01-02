@@ -95,9 +95,15 @@ namespace SchnappsAndLiquor.Game
             this.oPlayers.Add(new Player(sNameP));
         }
 
-        public void HandleClientAction(ClientAction action)
+        /// <summary>
+        /// Handle client actions
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns>Returns true if the game state was altered in order to push it to every client</returns>
+        public bool HandleClientAction(ClientAction action)
         {
             // tu die dinge
+            return true;
         }
     }
 

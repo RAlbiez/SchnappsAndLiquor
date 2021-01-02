@@ -26,26 +26,20 @@ namespace SchnappsAndLiquor.Server
             this.oHttpServer.Log.Level = LogLevel.Info;
             this.oHttpServer.DocumentRootPath = ConfigurationManager.AppSettings["DocumentRootPath"];
             this.oHttpServer.OnGet += ServerStaticContent;
-            this.oHttpServer.AddWebSocketService("/", (ClientConnection c) => c.SetMasterServer(this));
+            this.oHttpServer.AddWebSocketService("/", (ClientConnection c) => c.oMasterServer = this);
 
             this.oHttpServer.Start();
-            if (this.oHttpServer.IsListening)
-            {
-                this.oHttpServer.Log.Info("Started Masterserver on port " + port);
-                foreach (var path in this.oHttpServer.WebSocketServices.Paths)
-                {
-                    this.oHttpServer.Log.Info("- " + path);
-                }
-                this.oHttpServer.Log.Info("Press Enter key to stop the server...");
-                Console.ReadLine();
-            }
-            else
+            if (!this.oHttpServer.IsListening)
             {
                 this.oHttpServer.Log.Fatal("Masterserver failed to start...");
+                return;
             }
+            this.oHttpServer.Log.Info("Started Masterserver on port " + port);
+            this.oHttpServer.Log.Info("Press Enter key to stop the server...");
+            Console.ReadLine();
         }
 
-        public string CreateGame(string playerName, ClientConnection connection)
+        public string CreateGame(ClientConnection connection)
         {
             while (true)
             {
@@ -55,22 +49,40 @@ namespace SchnappsAndLiquor.Server
                 game.sGameId = id;
                 this.oGames.Add(id, game);
                 this.oConnections.Add(id, new List<ClientConnection>());
+                this.oHttpServer.Log.Info("Created new game session " + id + " \t (" + this.oGames.Count + " Total)");
                 return id;
             }
         }
 
-        public Game.Game JoinGame(string id, string name, ClientConnection connection)
+        public Game.Game JoinGame(string id, ClientConnection connection)
         {
-            if (this.oGames.ContainsKey(id))
+            if (!this.oGames.ContainsKey(id)) { return null; }
+
+            foreach (var i in this.oConnections[id])
             {
-                this.oConnections[id].Add(connection);
-                return this.oGames[id];
+                if (i.sName == connection.sName)
+                {
+                    // Don't two connections with the same name
+                    return null;
+                }
             }
-            return null;
+            this.oConnections[id].Add(connection);
+            var game = this.oGames[id];
+            foreach (var i in game.oPlayers)
+            {
+                if (i.sName == connection.sName)
+                {
+                    // Player was already in the game, no need to add one
+                    return game;
+                }
+            }
+            game.AddPlayer(connection.sName);
+            return game;
         }
 
         public void PushGameState(string id)
         {
+            if (!this.oGames.ContainsKey(id)) { return; }
             var state = JsonConvert.SerializeObject(this.oGames[id]);
             foreach (var c in this.oConnections[id])
             {
@@ -78,17 +90,18 @@ namespace SchnappsAndLiquor.Server
             }
         }
 
-        public void OnClientDisconnect(ClientConnection connection, string gameId)
+        public void OnClientDisconnect(ClientConnection connection, string id)
         {
-            foreach (var j in oConnections[gameId])
+            foreach (var j in oConnections[id])
             {
                 if (j == connection)
                 {
-                    oConnections[gameId].Remove(connection);
-                    if (oConnections[gameId].Count == 0)
+                    oConnections[id].Remove(connection);
+                    if (oConnections[id].Count == 0)
                     {
-                        oConnections.Remove(gameId);
-                        oGames.Remove(gameId);
+                        oConnections.Remove(id);
+                        oGames.Remove(id);
+                        this.oHttpServer.Log.Info("Closed game session " + id + " \t (" + this.oGames.Count + " Total)");
                     }
                     return;
                 }
