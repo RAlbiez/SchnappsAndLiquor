@@ -6,16 +6,27 @@ using System.Xml.Serialization;
 
 namespace SchnappsAndLiquor.Game
 {
+    enum State
+    {
+        Roll,
+        FieldAction,
+        Skip
+    };
+
     public class Game
     {
         public Board oBoard = new Board();
         public PlayerList oPlayers = new PlayerList();
         public short shtCurrentPlayer = 0;
         public string sGameId = "";
+        private State oGameState;
+        private short shtCurrentField;
+        private Action<Game, Answer> oCurrentCallback;
 
         public Game()
         {
             this.InitBoard();
+            oGameState = State.Roll;
         }
 
         public Player GetCurentPlayer()
@@ -32,11 +43,19 @@ namespace SchnappsAndLiquor.Game
         {
             var oReturn = this.oBoard[shtFieldNumber].FieldAction(gPlayerID, this);
 
+            oCurrentCallback = oReturn.Callback;
+
+            if(oReturn.oChoice != null && oReturn.oChoice.bCanSkip )
+            {
+                oGameState = State.Skip;
+            }
+
             if(oReturn.oChoice != null)
             {
-
+                oGameState = State.FieldAction;
             }
         }
+
 
         public void MovePlayerBy(short shtPlayerNumber, short shtNumOfFields)
         {
@@ -102,7 +121,33 @@ namespace SchnappsAndLiquor.Game
         /// <returns>Returns true if the game state was altered in order to push it to every client</returns>
         public bool HandleClientAction(ClientAction action)
         {
-            // tu die dinge
+            if (oPlayers.GetByName(action.GetFirst("name")).gPlayerID != this.GetCurentPlayer().gPlayerID)
+            {
+                return false;
+            }
+
+            State oPlayerState = State.Roll;
+
+            if (oPlayerState != oGameState)
+                return false;
+
+            switch (oPlayerState)
+            {
+                case State.Roll:
+                    if(short.TryParse(action.GetFirst("nicerdicer"), out short shtNumberRolled))
+                    {
+                        this.MovePlayerBy(this.GetCurentPlayer().gPlayerID, shtNumberRolled);
+                    }
+                    return true;
+                case State.Skip:
+                    oCurrentCallback(this, new Answer() { bSkipped = action.GetFirst("answer") == "Ja" });
+
+                    return true;
+                default:
+                    break;
+            }
+
+
             return true;
         }
     }

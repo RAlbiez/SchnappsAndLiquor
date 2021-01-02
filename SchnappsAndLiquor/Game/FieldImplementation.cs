@@ -25,6 +25,46 @@ namespace SchnappsAndLiquor.Game
         }
     }
 
+    /* copy this to create a new Field type
+    public class SwapPositionField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            
+        };
+
+        public Guid gKey { get; set; }
+        public bool bCanAppearMulitpleTimes { get; set; }
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+
+        private short shtNumberToDrink;
+        private short shtSkipCost;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+
+            gKey = Guid.NewGuid();
+            bCanAppearMulitpleTimes = true;
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game,Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        {
+            var oPlayerList = oGame.oPlayers as IEnumerable<Player>;
+
+            return (new Choice(oPlayerList.Select(x => x.sName), oGame.oPlayers.GetByID(gPlayerId).sName, true, shtSkipCost), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, Answer oAnswer)
+        {
+            
+        }
+    }*/
+
     public class StartField : IField
     {
         public Guid gKey { get; set; }
@@ -97,6 +137,7 @@ namespace SchnappsAndLiquor.Game
             shtNumberToMove = (short)GameParams.oRandomInstance.Next(-2, 0);
             string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
 
+
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;
             sText = String.Format(sTextToUse, shtNumberToMove);
@@ -131,12 +172,12 @@ namespace SchnappsAndLiquor.Game
         public void Init(Game oGame, short shtPos)
         {
             var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
 
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;
-            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
             shtBoardPos = shtPos;
         }
 
@@ -150,9 +191,9 @@ namespace SchnappsAndLiquor.Game
 
     public class DrinkAndMoveField : IField
     {
-        private List<string> oReasons = new List<string>()
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            "Komme aus dem Gefängnis frei. Warte falsches Spiel...Egal. Trink {0} Schluck und gehe {1} vor."
+            ("Komme aus dem Gefängnis frei. Warte falsches Spiel...Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4)
         };
 
         public Guid gKey { get; set; }
@@ -165,14 +206,15 @@ namespace SchnappsAndLiquor.Game
 
         public void Init(Game oGame, short shtPos)
         {
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(2, 4);
             shtNumberToMove = (short)GameParams.oRandomInstance.Next(1, 3);
 
-            string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;
-            sText = String.Format(sTextToUse, shtNumberToDrink, shtNumberToMove);
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink, shtNumberToMove);
             shtBoardPos = shtPos;
         }
 
@@ -187,9 +229,9 @@ namespace SchnappsAndLiquor.Game
 
     public class SwapPositionField : IField
     {
-        private List<string> oReasons = new List<string>()
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            "Tausche die Position mit einem beliebigem Spieler, ihr trinkt beide {0}"
+            ("Tausche die Position mit einem beliebigem Spieler, ihr trinkt beide {0}",1,4)
         };
 
         public Guid gKey { get; set; }
@@ -202,14 +244,13 @@ namespace SchnappsAndLiquor.Game
 
         public void Init(Game oGame, short shtPos)
         {
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 4);
-
-            string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
             shtSkipCost = 3;
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = false;
-            sText = String.Format(sTextToUse, shtNumberToDrink);
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
             shtBoardPos = shtPos;
         }
 
@@ -244,9 +285,9 @@ namespace SchnappsAndLiquor.Game
 
     public class DoubleUpField : IField
     {
-        private List<string> oReasons = new List<string>()
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            "Du trinkst {0}, wähle einen anderen Spieler, er trinkt das doppelte."
+            ("Du trinkst {0}, wähle einen anderen Spieler, er trinkt das doppelte.", 1,3)
         };
 
         public Guid gKey { get; set; }
@@ -260,11 +301,13 @@ namespace SchnappsAndLiquor.Game
         {
             shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 3);
 
-            string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;
-            sText = String.Format(sTextToUse, shtNumberToDrink);
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
             shtBoardPos = shtPos;
         }
 
