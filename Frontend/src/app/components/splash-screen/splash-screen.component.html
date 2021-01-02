@@ -1,21 +1,28 @@
-<div>
-    <div class="frame">
-        Spielername
+<div class="container">
+
+    <div class="container ">
+        <b>Wie lautet dein Name, Unbekannter?</b>
         <input type="text" [(ngModel)]="playerName">
     </div>
-    <div class="frame side">
-        <div class="frame">
-            <p>Eigenes spiel</p>
-            <button (click)="createLobby()">
-                mache spiel
+
+    <h3 class="center">Was möchtest du tun?</h3>
+
+    <div class="container ">
+        <div class="card-panel grey lighten-2 center">
+            <p>Ein neues Spiel für mich und meine Kumpanen erstellen:</p>
+            <button class="btn" (click)="createLobby()">
+                Erstelle Spiel
             </button>
         </div>
-        <div class="frame">
-            Empfangsraumkennung
-            <input type="text" [(ngModel)]="gameCode">
+    </div>
+
+    <div class="container ">
+        <div class="card-panel grey lighten-2 center">
+            Einem offenem Spiel beitreten:
+            <input class="center" type="text" [(ngModel)]="gameCode">
             <br>
-            <button (click)="joinGame()">
-                trete spiel
+            <button class="btn" (click)="joinGame()">
+                Spiel beitreten
             </button>
         </div>
     </div>
