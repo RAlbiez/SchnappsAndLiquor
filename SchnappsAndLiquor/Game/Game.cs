@@ -12,6 +12,7 @@ namespace SchnappsAndLiquor.Game
         public PlayerList oPlayers = new PlayerList();
         public short shtCurrentPlayer = 0;
         public string sGameId = "";
+        public string sLobbyLeader = "";
 
         public Game()
         {
@@ -93,6 +94,11 @@ namespace SchnappsAndLiquor.Game
         public void AddPlayer(string sNameP)
         {
             this.oPlayers.Add(new Player(sNameP));
+        }
+        
+        public void RemovePlayer(string sNameP)
+        {
+            this.oPlayers.Remove(this.oPlayers.GetByName(sNameP));
         }
 
         /// <summary>
