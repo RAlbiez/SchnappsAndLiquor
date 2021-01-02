@@ -16,6 +16,7 @@ namespace SchnappsAndLiquor.Server
         private HttpServer oHttpServer = null;
         private Dictionary<string, Game.Game> oGames = new Dictionary<string, Game.Game>();
         private Dictionary<string, List<ClientConnection>> oConnections = new Dictionary<string, List<ClientConnection>>();
+        private Dictionary<string, string> oLobbyLeader = new Dictionary<string, string>();
         private static Random random = new Random();
 
         public MasterServer()
@@ -49,6 +50,7 @@ namespace SchnappsAndLiquor.Server
                 game.sGameId = id;
                 this.oGames.Add(id, game);
                 this.oConnections.Add(id, new List<ClientConnection>());
+                this.oLobbyLeader.Add(id, connection.sName);
                 this.oHttpServer.Log.Info("Created new game session " + id + " \t (" + this.oGames.Count + " Total)");
                 return id;
             }
@@ -80,6 +82,20 @@ namespace SchnappsAndLiquor.Server
             return game;
         }
 
+        public bool KickPlayer(string id, string name, ClientConnection connetion)
+        {
+            if (connetion.sName != this.oLobbyLeader[id]) { return false; }
+            foreach (var i in this.oConnections[id])
+            {
+                if (i.sName == name)
+                {
+                    i.CloseConnection();
+                    this.oGames[id].RemovePlayer(name);
+                }
+            }
+            return true;
+        }
+
         public void PushGameState(string id)
         {
             if (!this.oGames.ContainsKey(id)) { return; }
@@ -101,6 +117,7 @@ namespace SchnappsAndLiquor.Server
                     {
                         oConnections.Remove(id);
                         oGames.Remove(id);
+                        oLobbyLeader.Remove(id);
                         this.oHttpServer.Log.Info("Closed game session " + id + " \t (" + this.oGames.Count + " Total)");
                     }
                     return;
@@ -124,6 +141,7 @@ namespace SchnappsAndLiquor.Server
             if (!e.TryReadFile(path, out contents))
             {
                 res.StatusCode = (int)HttpStatusCode.NotFound;
+                this.oHttpServer.Log.Info("Static file not found " + path);
                 return;
             }
 

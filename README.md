@@ -12,6 +12,8 @@ Frontend benötigt Nodejs
 
 `npm run build`
 
-Lösung bauen
+Lösung bauen und starten
+
+`dotnet publish SchnappsAndLiquor.sln --output ./build/ --runtime linux-x64`
 
 Auf localhost:8080 brausen

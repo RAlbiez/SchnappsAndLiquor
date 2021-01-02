@@ -23,6 +23,8 @@ namespace SchnappsAndLiquor.Server
             this.oMasterServer.PushGameState(this.oCurrentGame.sGameId);
         }
 
+        public void CloseConnection() { Close(); }
+
         protected override void OnMessage(MessageEventArgs e)
         {
             var action = JsonConvert.DeserializeObject<ClientAction>(e.Data);
@@ -37,6 +39,12 @@ namespace SchnappsAndLiquor.Server
                 this.sName = action.GetFirst("name");
                 var id = action.GetFirst("lobbyId");
                 this.oCurrentGame = this.oMasterServer.JoinGame(id, this);
+            }
+            else if (action.Type == "ClientKick")
+            {
+                this.sName = action.GetFirst("name");
+                this.oMasterServer.KickPlayer(this.oCurrentGame.sGameId, sName, this);
+                return;
             }
             else
             {
