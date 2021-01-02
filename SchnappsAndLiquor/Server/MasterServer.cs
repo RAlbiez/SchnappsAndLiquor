@@ -141,6 +141,7 @@ namespace SchnappsAndLiquor.Server
             if (!e.TryReadFile(path, out contents))
             {
                 res.StatusCode = (int)HttpStatusCode.NotFound;
+                this.oHttpServer.Log.Info("Static file not found " + path);
                 return;
             }
 
