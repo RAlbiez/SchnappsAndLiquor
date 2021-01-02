@@ -1,18 +1,55 @@
-<div>
-  <div>
-    Interessenvertretung Identifikation:
-    <b>{{ connection.gameState.sGameId }}</b>
-  </div>
-  Spielerliste:
-  <div *ngFor="let i of connection.gameState.oPlayers">
-    <b>{{ i.sName }}</b>
-     {{ i.lngPoints }}
-  </div>
-</div>
+<div class="row">
 
-<div *ngFor="let i of connection.gameState.oBoard.oFields" class="field">
-    <div class="text">
-        {{ i.sText }}
+  <!-- Info card -->
+  <div class="col s2">
+    <div class="card small grey lighten-2">
+      <div class="card-content">
+        <span class="card-title ">ID: {{ connection.gameState.sGameId }}</span>
+        <p>Hier können wir in Zukunft eventuell spannende Informationen anzeigen. Vielleicht die
+          Aufgabe, auf
+          die ein
+          Spieler eben gelandet ist.</p>
+      </div>
+      <div class="card-action center">
+        <ul>
+          <li><button class="btn">ID kopieren</button></li>
+          <li><button class="btn">Link kopieren</button></li>
+        </ul>
+      </div>
     </div>
-</div>
 
+    <!-- Display dice -->
+    <div class="card grey lighten-2">
+      <div class="card-image">
+        <img src="https://theforcer.de/w.png">
+      </div>
+      <div class="card-action center">
+        <button class="btn waves-effect waves-light teal">Würfeln</button>
+      </div>
+    </div>
+
+    <!-- List of players -->
+    <div class="collection">
+      <a *ngFor="let i of connection.gameState.oPlayers" class="collection-item">
+        <div>{{ i.sName }}<a class="secondary-content">Points: {{ i.lngPoints}}</a></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Shameful table-generation 😓 -->
+  <div class="col s10">
+    <table class="centered-table">
+      <tbody>
+        <tr *ngFor="let j of [0,1,2,3,4,5,6,7]">
+          <td *ngFor="let i of connection.gameState.oBoard.oFields.slice(j*8, j*8+8)" class="center">
+            <!-- Experiment with cards components for displaying the fields -->
+            <!-- <div class="card-panel small teal"> -->
+            {{ i.sText }}
+            <!-- </div> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
