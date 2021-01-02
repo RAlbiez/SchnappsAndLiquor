@@ -31,6 +31,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         public StartField()
         {
@@ -55,6 +57,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         public FinishField()
         {
@@ -77,7 +81,6 @@ namespace SchnappsAndLiquor.Game
         }
     }
 
-
     public class MoveBackByField : IField
     {
         private List<string> oReasons = new List<string>()
@@ -89,6 +92,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToMove;
 
@@ -126,6 +131,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
 
@@ -160,6 +167,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
         private short shtNumberToMove;
@@ -198,6 +207,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
         private short shtSkipCost;
@@ -254,6 +265,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
 
@@ -300,6 +313,8 @@ namespace SchnappsAndLiquor.Game
         public bool bCanAppearMulitpleTimes { get; set; }
         public string sText { get; set; }
         public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
 

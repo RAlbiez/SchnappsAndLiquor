@@ -17,6 +17,7 @@ namespace SchnappsAndLiquor.Game
     {
         public Board oBoard = new Board();
         public PlayerList oPlayers = new PlayerList();
+        public List<SnakeOrLadder> oSnakesAndLadders;
         public short shtCurrentPlayer = 0;
         public string sGameId = "";
         public string sLobbyLeader = "";
@@ -27,6 +28,9 @@ namespace SchnappsAndLiquor.Game
         public Game()
         {
             this.InitBoard();
+
+            oSnakesAndLadders = SnakeAndLadderService.GenerateSnakesAndLadders(this);
+
             oGameState = State.Roll;
         }
 
@@ -162,8 +166,8 @@ namespace SchnappsAndLiquor.Game
     {
         public const int MAX_FIELDS = 64;
 
-        public const int DIM_1 = 8;
-        public const int DIM_2 = 8;
+        public const int WIDTH = 8;
+        public const int HEIGHT = 8;
 
         public static Random oRandomInstance = new Random();
     }
