@@ -21,6 +21,11 @@ namespace SchnappsAndLiquor.Game
             this.oList.Add(oPlayerP);
         }
 
+        public void Remove(Player oPlayerP)
+        {
+            this.oList.Remove(oPlayerP);
+        }
+
         public Player GetByID(Guid gPlayerIDP) => this.oList.Where(x => x.gPlayerID == gPlayerIDP).FirstOrDefault();
 
         public Player GetByName(string sNameP) => this.oList.Where(x => x.sName == sNameP).FirstOrDefault();
