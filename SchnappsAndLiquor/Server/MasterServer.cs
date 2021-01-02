@@ -99,7 +99,8 @@ namespace SchnappsAndLiquor.Server
         public void PushGameState(string id)
         {
             if (!this.oGames.ContainsKey(id)) { return; }
-            var state = JsonSerializer.Serialize(this.oGames[id]);
+            var options = new JsonSerializerOptions { IncludeFields = true };
+            var state = JsonSerializer.Serialize(this.oGames[id], options);
             foreach (var c in this.oConnections[id])
             {
                 c.SendData(state);
