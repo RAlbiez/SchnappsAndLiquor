@@ -6,96 +6,80 @@ using System.Xml.Serialization;
 
 namespace SchnappsAndLiquor.Game
 {
-    enum State
-    {
-        Roll,
-        FieldAction,
-        Skip
-    };
-
     public class Game
     {
         public Board oBoard = new Board();
-        public PlayerList oPlayers = new PlayerList();
+        public Dictionary<string, Player> oPlayers = new Dictionary<string, Player>();
+        public PlayerOrder oPlayerOrder = new PlayerOrder();
         public List<SnakeOrLadder> oSnakesAndLadders;
-        public short shtCurrentPlayer = 0;
         public string sGameId = "";
         public string sLobbyLeader = "";
-        private State oGameState;
-        private short shtCurrentField;
-        private Action<Game, Answer> oCurrentCallback;
+        private Message oCurrentMessage;
+        private Queue<Message> oMessageQueue = new Queue<Message>();
 
         public Game()
         {
             this.InitBoard();
 
-            oSnakesAndLadders = SnakeAndLadderService.GenerateSnakesAndLadders(this);
-
-            oGameState = State.Roll;
+            oSnakesAndLadders = SnakeAndLadderService.GenerateSnakesAndLadders(this);         
         }
 
         public Player GetCurentPlayer()
         {
-            return this.oPlayers[shtCurrentPlayer];
+            return oPlayers[oPlayerOrder.GetCurrent()];
         }
 
-        public void WinGame(Guid gPlayerId)
+        public void WinGame(string sPlayerName)
         {
 
         }
 
-        protected void ActivateField(Guid gPlayerID, short shtFieldNumber)
+        protected void ActivateField(string sPlayerName, short shtFieldNumber)
         {
-            var oReturn = this.oBoard[shtFieldNumber].FieldAction(gPlayerID, this);
+            var oReturn = oBoard[shtFieldNumber].FieldAction(sPlayerName, this);
 
-            oCurrentCallback = oReturn.Callback;
-
-            if(oReturn.oChoice != null && oReturn.oChoice.bCanSkip )
+            if(oBoard[shtFieldNumber].bIsStartPoint)
             {
-                oGameState = State.Skip;
+                //Messages for snakes and ladders
             }
+
 
             if(oReturn.oChoice != null)
             {
-                oGameState = State.FieldAction;
+                Message oMessage = new Message("fieldaction", sPlayerName, oReturn.oChoice, oReturn.Callback);
+
+                if (oReturn.oChoice.bCanSkip)
+                {
+                    oMessageQueue.Enqueue(new Message("skip", sPlayerName, 
+                        new Choice(new List<string> { "Ja", "Nein" }, sPlayerName), DequeueMessage, oMessage.sMessageID));
+                }
+
+                oMessageQueue.Enqueue(oMessage);
             }
         }
 
-
-        public void MovePlayerBy(short shtPlayerNumber, short shtNumOfFields)
+        protected void DequeueMessage(Game oGame, string sAnswer)
         {
-            Player oPlayer = this.oPlayers[shtPlayerNumber];
-            short shtNewPos = oPlayer.MoveBy(shtNumOfFields);
-            this.ActivateField(oPlayer.gPlayerID, shtNewPos);
-        }
+            Queue<Message> oTempQueue = new Queue<Message>();
 
-        public void MovePlayerBy(Guid gPlayerId, short shtNumOfFields)
-        {
-            Player oPlayer = this.oPlayers.GetByID(gPlayerId);
-            short shtNewPos = oPlayer.MoveBy(shtNumOfFields);
-            this.ActivateField(oPlayer.gPlayerID, shtNewPos);
+            Message oMessage = oGame.oMessageQueue.Dequeue();
+
+            if (oMessage.sMessageID != sAnswer)
+                oTempQueue.Enqueue(oMessage);
+
+            oGame.oMessageQueue = oTempQueue;
         }
 
         public void MovePlayerBy(string sPlayerName, short shtNumOfFields)
         {
-            Player oPlayer = this.oPlayers.GetByName(sPlayerName);
+            Player oPlayer = this.oPlayers[sPlayerName];
             short shtNewPos = oPlayer.MoveBy(shtNumOfFields);
-            this.ActivateField(oPlayer.gPlayerID, shtNewPos);
-        }
-
-        public void AddPointsToPlayer(short shtPlayerNumber, short shtPointsToAdd)
-        {
-            this.oPlayers[shtPlayerNumber].AddPoints(shtPointsToAdd);
-        }
-
-        public void AddPointsToPlayer(Guid gPlayerId, short shtPointsToAdd)
-        {
-            this.oPlayers.GetByID(gPlayerId).AddPoints(shtPointsToAdd);
+            this.ActivateField(sPlayerName, shtNewPos);
         }
 
         public void AddPointsToPlayer(string sPlayerName, short shtPointsToAdd)
         {
-            this.oPlayers.GetByName(sPlayerName).AddPoints(shtPointsToAdd);
+            this.oPlayers[sPlayerName].AddPoints(shtPointsToAdd);
         }
 
         protected void InitBoard()
@@ -116,12 +100,16 @@ namespace SchnappsAndLiquor.Game
 
         public void AddPlayer(string sNameP)
         {
-            this.oPlayers.Add(new Player(sNameP));
+            this.oPlayers.Add(sNameP, new Player(sNameP));
+            this.oPlayerOrder.AddPlayer(sNameP);
+
+            if(this.oPlayers.Count == 1)
+                oMessageQueue.Enqueue(new Message("roll", sNameP));
         }
         
         public void RemovePlayer(string sNameP)
         {
-            this.oPlayers.Remove(this.oPlayers.GetByName(sNameP));
+            this.oPlayers.Remove(sNameP);
         }
 
         /// <summary>
@@ -131,34 +119,45 @@ namespace SchnappsAndLiquor.Game
         /// <returns>Returns true if the game state was altered in order to push it to every client</returns>
         public bool HandleClientAction(ClientAction action)
         {
-            if (oPlayers.GetByName(action.GetFirst("name")).gPlayerID != this.GetCurentPlayer().gPlayerID)
+            if(oCurrentMessage == null)
+            {
+                if (oMessageQueue.Count > 0)
+                    oCurrentMessage = oMessageQueue.Dequeue();
+                else
+                    return false;
+            }
+
+            if(action.GetFirst("messageid") != oCurrentMessage.sMessageID || action.GetFirst("name") != oCurrentMessage.sPlayerName)
             {
                 return false;
             }
 
-            State oPlayerState = State.Roll;
+            bool bReturn = true;  
 
-            if (oPlayerState != oGameState)
-                return false;
-
-            switch (oPlayerState)
+            switch (oCurrentMessage.sMessageType)
             {
-                case State.Roll:
-                    if(short.TryParse(action.GetFirst("nicerdicer"), out short shtNumberRolled))
+                case "roll":
+                    if(short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
                     {
-                        this.MovePlayerBy(this.GetCurentPlayer().gPlayerID, shtNumberRolled);
+                        this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
                     }
-                    return true;
-                case State.Skip:
-                    oCurrentCallback(this, new Answer() { bSkipped = action.GetFirst("answer") == "Ja" });
-
-                    return true;
+                    break;
+                case "skip":
+                    if(action.GetFirst("answer") == "Ja")
+                        oCurrentMessage.oCallback(this, oCurrentMessage.sSpecialField);
+                    break;
+                case "fieldaction":
+                    oCurrentMessage.oCallback(this, action.GetFirst("answer"));
+                    break;
                 default:
+                    bReturn = false;
                     break;
             }
 
+            if (bReturn && oMessageQueue.Count > 0)
+                oCurrentMessage = new Message("roll", oPlayerOrder.Next());
 
-            return true;
+            return bReturn;
         }
     }
 

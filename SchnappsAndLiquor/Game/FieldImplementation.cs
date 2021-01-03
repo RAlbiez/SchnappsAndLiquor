@@ -47,7 +47,7 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = 0;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame) => (null, null);
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame) => (null, null);
 
     }
 
@@ -73,9 +73,9 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = (short)(GameParams.MAX_FIELDS-1);
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.WinGame(gPlayerID);
+            oGame.WinGame(sPlayerName);
 
             return (null, null);
         }
@@ -109,9 +109,9 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerID, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.MovePlayerBy(gPlayerID, shtNumberToMove);
+            oGame.MovePlayerBy(sPlayerName, shtNumberToMove);
 
             return (null, null);
         }
@@ -148,9 +148,9 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.AddPointsToPlayer(gPlayerId, shtNumberToDrink);
+            oGame.AddPointsToPlayer(sPlayerName, shtNumberToDrink);
 
             return (null, null);
         }
@@ -187,10 +187,10 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.AddPointsToPlayer(gPlayerId, shtNumberToDrink);
-            oGame.MovePlayerBy(gPlayerId, shtNumberToMove);
+            oGame.AddPointsToPlayer(sPlayerName, shtNumberToDrink);
+            oGame.MovePlayerBy(sPlayerName, shtNumberToMove);
 
             return (null, null);
         }
@@ -225,32 +225,24 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game,Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game,string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            var oPlayerList = oGame.oPlayers as IEnumerable<Player>;
 
-            return (new Choice(oPlayerList.Select(x => x.sName), oGame.oPlayers.GetByID(gPlayerId).sName, true, shtSkipCost), ReturnAction);
+            return (new Choice(oGame.oPlayers.Keys, sPlayerName, true, shtSkipCost), ReturnAction);
         }
 
-        public void ReturnAction(Game oGame, Answer oAnswer)
+        public void ReturnAction(Game oGame, string sAnswer)
         {
-            if (!oAnswer.bSkipped)
-            {
-                var oFirstPlayer = oGame.GetCurentPlayer();
-                var oSecondPlayer = oGame.oPlayers.GetByName(oAnswer.sAnswer);
+            var oFirstPlayer = oGame.GetCurentPlayer();
+            var oSecondPlayer = oGame.oPlayers[sAnswer];
 
-                oFirstPlayer.AddPoints(shtNumberToDrink);
-                oSecondPlayer.AddPoints(shtNumberToDrink);
+            oFirstPlayer.AddPoints(shtNumberToDrink);
+            oSecondPlayer.AddPoints(shtNumberToDrink);
 
-                var t = oFirstPlayer.shtBoardPosition;
+            var t = oFirstPlayer.shtBoardPosition;
 
-                oFirstPlayer.shtBoardPosition = oSecondPlayer.shtBoardPosition;
-                oSecondPlayer.shtBoardPosition = t;
-            }
-            else
-            {
-                oGame.GetCurentPlayer().AddPoints(-1 * shtSkipCost);
-            }
+            oFirstPlayer.shtBoardPosition = oSecondPlayer.shtBoardPosition;
+            oSecondPlayer.shtBoardPosition = t;
         }
     }
 
@@ -284,17 +276,15 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            var oPlayerList = oGame.oPlayers as IEnumerable<Player>;
-
-            return (new Choice(oPlayerList.Select(x => x.sName), oGame.oPlayers.GetByID(gPlayerId).sName), ReturnAction);
+            return (new Choice(oGame.oPlayers.Keys, sPlayerName), ReturnAction);
         }
 
-        public void ReturnAction(Game oGame, Answer oAnswer)
+        public void ReturnAction(Game oGame, string sAnswer)
         {
             var oFirstPlayer = oGame.GetCurentPlayer();
-            var oSecondPlayer = oGame.oPlayers.GetByName(oAnswer.sAnswer);
+            var oSecondPlayer = oGame.oPlayers[sAnswer];
 
             oFirstPlayer.AddPoints(shtNumberToDrink);
             oSecondPlayer.AddPoints(shtNumberToDrink * 2);
@@ -329,20 +319,18 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            var oPlayerList = oGame.oPlayers as IEnumerable<Player>;
-
-            return (new Choice(new List<string>() {"Ja", "Nein" }, oGame.oPlayers.GetByID(gPlayerId).sName), ReturnAction);
+            return (new Choice(new List<string>() {"Ja", "Nein" }, sPlayerName), ReturnAction);
         }
 
-        public void ReturnAction(Game oGame, Answer oAnswer)
+        public void ReturnAction(Game oGame, string sAnswer)
         {
-            if (oAnswer.sAnswer == "Ja")
+            if (sAnswer == "Ja")
             {
                 return;
             }
-            else if (oAnswer.sAnswer == "Nein")
+            else if (sAnswer == "Nein")
             {
                 var oFirstPlayer = oGame.GetCurentPlayer();
 

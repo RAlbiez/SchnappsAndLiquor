@@ -70,9 +70,9 @@ namespace SchnappsAndLiquor.Server
             }
             this.oConnections[id].Add(connection);
             var game = this.oGames[id];
-            foreach (var i in game.oPlayers)
+            foreach (var i in game.oPlayers.Keys)
             {
-                if (i.sName == connection.sName)
+                if (i == connection.sName)
                 {
                     // Player was already in the game, no need to add one
                     return game;

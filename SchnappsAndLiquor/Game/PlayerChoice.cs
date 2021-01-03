@@ -11,6 +11,7 @@ namespace SchnappsAndLiquor.Game
         public bool bCanSkip = false;
         public short shtSkipCost = 0;
         public string sPlayer;
+        public string sSpecialType;
 
         public Choice(IEnumerable<string> oInput, string sPlayerP)
         {
@@ -23,11 +24,5 @@ namespace SchnappsAndLiquor.Game
             bCanSkip = bCanSkipP;
             shtSkipCost = shtSkipCostP;
         }
-    }
-
-    public class Answer
-    {
-        public bool bSkipped;
-        public string sAnswer;
     }
 }

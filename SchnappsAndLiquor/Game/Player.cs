@@ -8,8 +8,6 @@ namespace SchnappsAndLiquor.Game
     public class Player
     {
         public string sName;
-        [JsonIgnore]
-        public Guid gPlayerID;
         public short shtBoardPosition = 0;
 
         public long lngPoints = 0;
@@ -18,7 +16,6 @@ namespace SchnappsAndLiquor.Game
         public Player(string sNameP)
         {
             this.sName = sNameP;
-            this.gPlayerID = Guid.NewGuid();
         }
 
         public short MoveBy(short shtNumFieldsP)

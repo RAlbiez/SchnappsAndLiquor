@@ -17,7 +17,7 @@ namespace SchnappsAndLiquor.Game
         string sText { get; set; }
         short shtBoardPos { get; set; }
         void Init(Game oGame, short shtPos);
-        (Choice oChoice, Action<Game, Answer> Callback) FieldAction(Guid gPlayerId, Game oGame);
+        (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame);
     }
 
 
