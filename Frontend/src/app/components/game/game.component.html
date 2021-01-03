@@ -1,34 +1,35 @@
 <div class="row">
 
-  <!-- Info card -->
+  <!-- Side column -->
   <div class="col s2">
+    <!-- Info card -->
     <div class="card grey lighten-2">
       <div class="card-content">
-          <button class="btn" style="width: 100%;" (click)="clipboard.copy(connection.gameState.sGameId)">Lobby ID: {{ connection.gameState.sGameId }}</button>
+        <button class="btn btn-block" (click)="clipboard.copy(connection.gameState.sGameId)">Lobby
+          ID: {{connection.gameState.sGameId }}</button>
+        <button class="btn btn-block"
+          (click)="openNewTab('https://meet.scheible.it/sul-'+connection.gameState.sGameId)">Jitsi Video-Chat</button>
       </div>
     </div>
 
-    <div class="card grey lighten-2" *ngIf="getCurrentCoice()">
-      <div class="card-content">
-        <p>{{ getCurrentFieldText() }}</p>
-        <div class="card-action center">
-          <button
-              class="btn waves-effect waves-light teal"
-              [disabled]="!getCurrentCoice().bCanSkip"
-              (click)="skip()">
-            Skip ({{ getCurrentCoice().shtSkipCost }})
-          </button>
-          <button *ngFor="let i of getCurrentCoice().oChoices"
-              class="btn waves-effect waves-light teal"
-              [disabled]="!isPlayerTurn()"
-              (click)="executeAction(i)">
-            {{ i }}
-          </button>
-        </div>
+    <!-- Field description card -->
+    <div class="card-panel grey lighten-2" *ngIf="getCurrentCoice()">
+      <span>{{ getCurrentFieldText() }}
+      </span>
+      <hr>
+      <div class="">
+        <button class="btn btn-block waves-effect waves-light teal" [disabled]="!getCurrentCoice().bCanSkip"
+          (click)="skip()">
+          Skip ({{ getCurrentCoice().shtSkipCost }})
+        </button>
+        <button *ngFor="let i of getCurrentCoice().oChoices" class="btn btn-block waves-effect waves-light teal"
+          [disabled]="!isPlayerTurn()" (click)="executeAction(i)">
+          {{ i }}
+        </button>
       </div>
     </div>
 
-    <!-- Display dice -->
+    <!-- Display dice & dice button -->
     <div class="card grey lighten-2">
       <div class="card-content">
         <div class="dice">
@@ -36,20 +37,20 @@
         </div>
       </div>
       <div class="card-action center">
-        <button class="btn waves-effect waves-light teal" (click)="roll()"
-        [disabled]="!canRoll()">Würfeln</button>
+        <button class="btn waves-effect waves-light teal" (click)="roll()" [disabled]="!canRoll()">Würfeln</button>
       </div>
     </div>
 
     <!-- List of players -->
     <div class="collection">
-      <a *ngFor="let player of getPlayers()" class="collection-item" [class.active]="getCurrentPlayer() === player.sName">
+      <a *ngFor="let player of getPlayers()" class="collection-item"
+        [class.active]="getCurrentPlayer() === player.sName">
         <div>
           <div [style.background]="player.sColor" class="color-dot"></div>
           {{ player.sName }}
-          <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">(horst)</ng-container>
-          <ng-container *ngIf="player.sName === connection.playerName">(du)</ng-container>
-          <a class="secondary-content">Points: {{ player.lngPoints}}</a>
+          <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">👑</ng-container>
+          <!-- <ng-container *ngIf="player.sName === connection.playerName">(du)</ng-container> -->
+          <a class="secondary-content">🍺: {{ player.lngPoints}}</a>
         </div>
       </a>
     </div>
@@ -62,7 +63,9 @@
           <td *ngFor="let field of rows" class="center">
             {{ field.sText }}
             <ng-container *ngFor="let player of getPlayers()">
-              <div *ngIf="player.shtBoardPosition === field.shtBoardPos"><div [style.background]="player.sColor" class="color-dot"></div></div>
+              <div *ngIf="player.shtBoardPosition === field.shtBoardPos">
+                <div [style.background]="player.sColor" class="color-dot"></div>
+              </div>
             </ng-container>
           </td>
         </tr>

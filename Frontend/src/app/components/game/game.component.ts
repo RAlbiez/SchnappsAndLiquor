@@ -21,6 +21,10 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public openNewTab(url: string) {
+    window.open(url, "_blank");
+  }
+
   public getLocation() {
     return window.location.href;
   }
@@ -59,7 +63,7 @@ export class GameComponent implements OnInit {
   }
 
   public roll() {
-    if (this.rolling) {return; }
+    if (this.rolling) { return; }
     this.rolling = true;
     var iterations = 20;
     var interval = setInterval(() => {
