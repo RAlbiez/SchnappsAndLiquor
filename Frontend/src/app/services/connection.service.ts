@@ -16,6 +16,7 @@ export class ConnectionService {
 
   public gameCode = "";
   public playerName = "unbenannter"
+  public nameError = false;
 
   constructor() {
     let location = window.location.href;
@@ -38,6 +39,9 @@ export class ConnectionService {
   }
 
   public sendAction(data: ClientAction) {
+    if (this.gameState) {
+      data.add("messageid", this.gameState.oCurrentMessage.sMessageID);
+    }
     this.socket.send(JSON.stringify(data));
   }
 
@@ -53,9 +57,11 @@ export class ConnectionService {
     if (index != -1) {
       url = url.slice(0, index);
     }
-    window.history.pushState(
-      { }, "", url + "!" + this.gameState.sGameId
-    );
+    if (id) {
+      window.history.pushState({ }, "", url + "!" + this.gameState.sGameId);
+    } else {
+      window.history.pushState({ }, "", url);
+    }
   }
 
   private onOpen(e: Event) {
@@ -65,10 +71,17 @@ export class ConnectionService {
   }
 
   private onMessage(e: MessageEvent) {
+    if (e.data === "name taken") {
+      this.nameError = true;
+      return;
+    }
+    this.nameError = false;
     let payload = JSON.parse(e.data);
     this.gameState = payload;
     if (this.gameState.sGameId) {
       this.setUrlId(this.gameState.sGameId);
+    } else {
+      this.setUrlId(null);
     }
     if (!environment.production) {
       (<any>window).DEBUGSate = this.gameState;

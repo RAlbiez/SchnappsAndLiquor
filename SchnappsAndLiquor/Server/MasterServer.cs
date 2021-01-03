@@ -54,6 +54,7 @@ namespace SchnappsAndLiquor.Server
                 this.oGames.Add(id, game);
                 this.oConnections.Add(id, new List<ClientConnection>());
                 this.oLobbyLeader.Add(id, connection.sName);
+                game.sLobbyLeader = connection.sName;
                 this.oHttpServer.Log.Info("Created new game session " + id + this.GetStats());
                 return id;
             }
@@ -67,7 +68,8 @@ namespace SchnappsAndLiquor.Server
             {
                 if (i.sName == connection.sName)
                 {
-                    // Don't two connections with the same name
+                    // Don't allow connections with the same name
+                    connection.SendData("name taken");
                     return null;
                 }
             }

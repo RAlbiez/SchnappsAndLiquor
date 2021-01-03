@@ -43,7 +43,11 @@ export class GameComponent implements OnInit {
   }
 
   public isPlayerTurn() {
-    return this.connection.playerName === this.connection.gameState.oCurrentMessage.sPlayerName;
+    return this.connection.playerName === this.getCurrentPlayer();
+  }
+
+  public getCurrentPlayer() {
+    return this.connection.gameState.oCurrentMessage.sPlayerName;
   }
 
   public canRoll() {
@@ -58,6 +62,27 @@ export class GameComponent implements OnInit {
     var param = new ClientAction(Actions.ClientMoveFields);
     param.add("answer", this.diceNumber + "");
     param.add("messageid", this.connection.gameState.oCurrentMessage.sMessageID);
+    this.connection.sendAction(param);
+  }
+
+  public getCurrentCoice() {
+    return this.connection.gameState.oCurrentMessage.oChoice;
+  }
+
+  public getCurrentFieldText() {
+    const position = this.connection.gameState.oPlayers[this.getCurrentPlayer()].shtBoardPosition;
+    return this.connection.gameState.oBoard.oFields[position].sText;
+  }
+
+  public skip() {
+    var param = new ClientAction(Actions.ClientSkipField);
+    param.add("answer", "Ja");
+    this.connection.sendAction(param);
+  }
+
+  public executeAction(name: string) {
+    var param = new ClientAction(Actions.ClientFieldAction);
+    param.add("answer", name);
     this.connection.sendAction(param);
   }
 

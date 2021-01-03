@@ -4,6 +4,7 @@
     <div class="container ">
         <b>Wie lautet dein Name, Unbekannter?</b>
         <input type="text" [(ngModel)]="connection.playerName">
+        <div style="color: red;" *ngIf="connection.nameError">langweiliger name brudi</div>
     </div>
 
     <h3 class="center">Was möchtest du tun?</h3>

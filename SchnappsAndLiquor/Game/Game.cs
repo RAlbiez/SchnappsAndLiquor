@@ -57,11 +57,11 @@ namespace SchnappsAndLiquor.Game
 
             if(oReturn.oChoice != null)
             {
-                Message oMessage = new Message("fieldaction", sPlayerName, oReturn.oChoice, oReturn.Callback);
+                Message oMessage = new Message("FieldAction", sPlayerName, oReturn.oChoice, oReturn.Callback);
 
                 if (oReturn.oChoice.bCanSkip)
                 {
-                    oMessageQueue.Enqueue(new Message("skip", sPlayerName, 
+                    oMessageQueue.Enqueue(new Message("SkipField", sPlayerName, 
                         new Choice(new List<string> { "Ja", "Nein" }, sPlayerName), DequeueMessage, oMessage.sMessageID));
                 }
 
@@ -117,7 +117,7 @@ namespace SchnappsAndLiquor.Game
             this.oPlayerOrder.AddPlayer(sNameP);
 
             if(this.oPlayers.Count == 1)
-                oCurrentMessage = new Message("ClientMoveFields", sNameP);
+                oCurrentMessage = new Message("MoveFields", sNameP);
         }
         
         public void RemovePlayer(string sNameP)
@@ -142,15 +142,15 @@ namespace SchnappsAndLiquor.Game
 
             switch (oCurrentMessage.sMessageType)
             {
-                case "ClientMoveFields":
+                case "MoveFields":
                     if(short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
                         this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
                     break;
-                case "ClientSkipField":
+                case "SkipField":
                     if(action.GetFirst("answer") == "Ja")
                         oCurrentMessage.oCallback(this, oCurrentMessage.sSpecialField);
                     break;
-                case "ClientFieldAction":
+                case "FieldAction":
                     oCurrentMessage.oCallback(this, action.GetFirst("answer"));
                     break;
                 default:
@@ -160,7 +160,7 @@ namespace SchnappsAndLiquor.Game
 
             if (bReturn)
             {
-                oCurrentMessage = oMessageQueue.Count == 0 ? new Message("ClientMoveFields", oPlayerOrder.Next()) : oMessageQueue.Dequeue();
+                oCurrentMessage = oMessageQueue.Count == 0 ? new Message("MoveFields", oPlayerOrder.Next()) : oMessageQueue.Dequeue();
             }
 
             return bReturn;

@@ -2,27 +2,38 @@
 
   <!-- Info card -->
   <div class="col s2">
-    <div class="card small grey lighten-2">
+    <div class="card grey lighten-2">
       <div class="card-content">
-        <span class="card-title ">ID: {{ connection.gameState.sGameId }}</span>
-        <p>Hier können wir in Zukunft eventuell spannende Informationen anzeigen. Vielleicht die
-          Aufgabe, auf
-          die ein
-          Spieler eben gelandet ist.</p>
+          <button class="btn" style="width: 100%;" (click)="clipboard.copy(connection.gameState.sGameId)">Lobby ID: {{ connection.gameState.sGameId }}</button>
       </div>
-      <div class="card-action center">
-        <ul>
-          <li><button class="btn" (click)="clipboard.copy(connection.gameState.sGameId)">ID kopieren</button></li>
-          <li><button class="btn" (click)="clipboard.copy(getLocation())">Link kopieren</button></li>
-        </ul>
+    </div>
+
+    <div class="card grey lighten-2" *ngIf="getCurrentCoice()">
+      <div class="card-content">
+        <p>{{ getCurrentFieldText() }}</p>
+        <div class="card-action center">
+          <button
+              class="btn waves-effect waves-light teal"
+              [disabled]="!getCurrentCoice().bCanSkip"
+              (click)="skip()">
+            Skip ({{ getCurrentCoice().shtSkipCost }})
+          </button>
+          <button *ngFor="let i of getCurrentCoice().oChoices"
+              class="btn waves-effect waves-light teal"
+              [disabled]="!isPlayerTurn()"
+              (click)="executeAction(i)">
+            {{ i }}
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Display dice -->
     <div class="card grey lighten-2">
-      {{ diceNumber }}
       <div class="card-image">
-        <img src="https://theforcer.de/w.png">
+        <div class="dice">
+          <div *ngFor="let i of [].constructor(diceNumber)" class="dice-eye"></div>
+        </div>
       </div>
       <div class="card-action center">
         <button class="btn waves-effect waves-light teal" (click)="roll()"
@@ -32,10 +43,12 @@
 
     <!-- List of players -->
     <div class="collection">
-      <a *ngFor="let player of getPlayers()" class="collection-item">
+      <a *ngFor="let player of getPlayers()" class="collection-item" [class.active]="getCurrentPlayer() === player.sName">
         <div>
           <div [style.background]="player.sColor" class="color-dot"></div>
           {{ player.sName }}
+          <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">(horst)</ng-container>
+          <ng-container *ngIf="player.sName === connection.playerName">(du)</ng-container>
           <a class="secondary-content">Points: {{ player.lngPoints}}</a>
         </div>
       </a>

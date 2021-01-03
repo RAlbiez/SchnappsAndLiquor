@@ -20,15 +20,26 @@ export class Player {
   ) {}
 }
 
+export class Choice {
+  constructor(
+    public bCanSkip: boolean,
+    public oChoices: string[],
+    public sPlayer: string,
+    public sSpecialType: string,
+    public shtSkipCost: number
+  ) { }
+}
+
 export class Message {
   constructor(
-    public oChoice,
+    public oChoice: Choice,
     public sMessageID: string,
     public sMessageType: string,
     public sPlayerName: string,
-    public sSpecialField: string
+    public sSpecialField: string,
   ) {}
 }
+
 
 export class GameState {
   constructor(
@@ -39,6 +50,7 @@ export class GameState {
       public intMaxFields: number,
       public intWidth: number,
       public intHeight: number,
-      public oCurrentMessage: Message
+      public oCurrentMessage: Message,
+      public sLobbyLeader: string
   ) {}
 }

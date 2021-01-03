@@ -1,9 +1,10 @@
 export enum Actions {
     ClientCreateLobby = "ClientCreateLobby",
     ClientJoinGame = "ClientJoinGame",
-    ClientMoveFields = "ClientMoveFields",
-    ClientSkipField = "ClientSkipField",
-    ClientFieldAction = "ClientFieldAction"
+    ClientKick = "ClientKick",
+    ClientMoveFields = "MoveFields",
+    ClientSkipField = "SkipField",
+    ClientFieldAction = "FieldAction"
 }
 
 class KeyVal {
@@ -18,7 +19,7 @@ export class ClientAction {
 
     constructor(
         public Type: Actions
-    ) {}
+    ) { }
 
     public add(key: string, value: string) {
         this.Parameters.push(new KeyVal(key, value));

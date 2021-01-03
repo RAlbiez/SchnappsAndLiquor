@@ -13,6 +13,8 @@ export class SplashScreenComponent implements OnInit {
     public connection: ConnectionService
   ) { }
 
+  changeName = false;
+
   ngOnInit(): void {
     // if (!environment.production) {
     //   this.createLobby();
