@@ -20,18 +20,24 @@
 
     <!-- Display dice -->
     <div class="card grey lighten-2">
+      {{ diceNumber }}
       <div class="card-image">
         <img src="https://theforcer.de/w.png">
       </div>
       <div class="card-action center">
-        <button class="btn waves-effect waves-light teal">Würfeln</button>
+        <button class="btn waves-effect waves-light teal" (click)="roll()"
+        [disabled]="!canRoll()">Würfeln</button>
       </div>
     </div>
 
     <!-- List of players -->
     <div class="collection">
-      <a *ngFor="let i of getPlayers()" class="collection-item">
-        <div>{{ i.sName }}<a class="secondary-content">Points: {{ i.lngPoints}}</a></div>
+      <a *ngFor="let player of getPlayers()" class="collection-item">
+        <div>
+          <div [style.background]="player.sColor" class="color-dot"></div>
+          {{ player.sName }}
+          <a class="secondary-content">Points: {{ player.lngPoints}}</a>
+        </div>
       </a>
     </div>
   </div>
@@ -42,6 +48,9 @@
         <tr *ngFor="let rows of getRows()">
           <td *ngFor="let field of rows" class="center">
             {{ field.sText }}
+            <ng-container *ngFor="let player of getPlayers()">
+              <div *ngIf="player.shtBoardPosition === field.shtBoardPos"><div [style.background]="player.sColor" class="color-dot"></div></div>
+            </ng-container>
           </td>
         </tr>
       </tbody>

@@ -1,8 +1,9 @@
 export enum Actions {
     ClientCreateLobby = "ClientCreateLobby",
     ClientJoinGame = "ClientJoinGame",
-    ClientRollDice = "ClientRollDice",
-    ServerJoinGame = "ServerJoinGame"
+    ClientMoveFields = "ClientMoveFields",
+    ClientSkipField = "ClientSkipField",
+    ClientFieldAction = "ClientFieldAction"
 }
 
 class KeyVal {

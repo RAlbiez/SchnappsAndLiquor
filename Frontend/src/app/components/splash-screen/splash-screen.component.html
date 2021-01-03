@@ -3,7 +3,7 @@
     <!-- Name input field -->
     <div class="container ">
         <b>Wie lautet dein Name, Unbekannter?</b>
-        <input type="text" [(ngModel)]="playerName">
+        <input type="text" [(ngModel)]="connection.playerName">
     </div>
 
     <h3 class="center">Was möchtest du tun?</h3>
@@ -22,7 +22,7 @@
     <div class="container ">
         <div class="card-panel grey lighten-2 center">
             Einem offenem Spiel beitreten:
-            <input class="center" type="text" [(ngModel)]="gameCode">
+            <input class="center" type="text" [(ngModel)]="connection.gameCode">
             <br>
             <button class="btn" (click)="joinGame()">
                 Spiel beitreten

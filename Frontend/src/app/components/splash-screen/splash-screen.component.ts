@@ -9,35 +9,31 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./splash-screen.component.css']
 })
 export class SplashScreenComponent implements OnInit {
-  public gameCode = "";
-  public playerName = "unbenannter"
   constructor(
-    private connection: ConnectionService
-    ) { }
+    public connection: ConnectionService
+  ) { }
 
   ngOnInit(): void {
-    if (!environment.production) {
-      this.createLobby();
-      return;
-    }
-
+    // if (!environment.production) {
+    //   this.createLobby();
+    //   return;
+    // }
     var lobbyId = this.connection.getIdFromUrl();
     if (lobbyId) {
-      this.gameCode = lobbyId;
-      this.joinGame();
+      this.connection.gameCode = lobbyId;
     }
   }
 
   createLobby() {
     var param = new ClientAction(Actions.ClientCreateLobby);
-    param.add("name", this.playerName);
+    param.add("name", this.connection.playerName);
     this.connection.sendAction(param);
   }
 
   joinGame() {
     var param = new ClientAction(Actions.ClientJoinGame);
-    param.add("name", this.playerName);
-    param.add("lobbyId", this.gameCode);
+    param.add("name", this.connection.playerName);
+    param.add("lobbyId", this.connection.gameCode);
     this.connection.sendAction(param);
   }
 

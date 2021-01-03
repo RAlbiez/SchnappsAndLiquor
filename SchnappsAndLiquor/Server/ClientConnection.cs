@@ -50,7 +50,7 @@ namespace SchnappsAndLiquor.Server
             {
                 if (this.oCurrentGame != null)
                 {
-                    if (!this.oCurrentGame.HandleClientAction(action))
+                    if (!this.oCurrentGame.HandleClientAction(action, this.sName))
                     {
                         return;
                     }

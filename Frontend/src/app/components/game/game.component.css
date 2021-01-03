@@ -11,4 +11,12 @@
 td {
     border-right: solid 1px #e0e0e0;
     border-left: solid 1px #e0e0e0;
-  }
+}
+
+.color-dot {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  border: 1px solid black;
+}

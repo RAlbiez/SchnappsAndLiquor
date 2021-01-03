@@ -17,13 +17,21 @@ namespace SchnappsAndLiquor.Game
         public int intMaxFields = GameParams.MAX_FIELDS;
         public int intWidth = GameParams.WIDTH;
         public int intHeight = GameParams.HEIGHT;
-        private Message oCurrentMessage;
+        public Message oCurrentMessage;
         private Queue<Message> oMessageQueue = new Queue<Message>();
+        private List<string> oColors = new List<string>();
 
         public Game()
         {
             this.InitBoard();
-
+            this.oColors.Add("#000000");
+            this.oColors.Add("#0000FF");
+            this.oColors.Add("#00FF00");
+            this.oColors.Add("#00FFFF");
+            this.oColors.Add("#FF0000");
+            this.oColors.Add("#FF00FF");
+            this.oColors.Add("#FFFF00");
+            this.oColors.Add("#FFFFFF");
             oSnakesAndLadders = SnakeAndLadderService.GenerateSnakesAndLadders(this);         
         }
 
@@ -103,15 +111,18 @@ namespace SchnappsAndLiquor.Game
 
         public void AddPlayer(string sNameP)
         {
-            this.oPlayers.Add(sNameP, new Player(sNameP));
+            var sColor = this.oColors[GameParams.oRandomInstance.Next(0, this.oColors.Count)];
+            this.oColors.Remove(sColor);
+            this.oPlayers.Add(sNameP, new Player(sNameP, sColor));
             this.oPlayerOrder.AddPlayer(sNameP);
 
             if(this.oPlayers.Count == 1)
-                oCurrentMessage = new Message("roll", sNameP);
+                oCurrentMessage = new Message("ClientMoveFields", sNameP);
         }
         
         public void RemovePlayer(string sNameP)
         {
+            this.oColors.Add(this.oPlayers[sNameP].sColor);
             this.oPlayers.Remove(sNameP);
         }
 
@@ -120,9 +131,9 @@ namespace SchnappsAndLiquor.Game
         /// </summary>
         /// <param name="action"></param>
         /// <returns>Returns true if the game state was altered in order to push it to every client</returns>
-        public bool HandleClientAction(ClientAction action)
+        public bool HandleClientAction(ClientAction action, string sNameP)
         {
-            if(action.GetFirst("messageid") != oCurrentMessage.sMessageID || action.GetFirst("name") != oCurrentMessage.sPlayerName)
+            if(action.GetFirst("messageid") != oCurrentMessage.sMessageID || sNameP != oCurrentMessage.sPlayerName)
             {
                 return false;
             }
@@ -131,15 +142,15 @@ namespace SchnappsAndLiquor.Game
 
             switch (oCurrentMessage.sMessageType)
             {
-                case "roll":
+                case "ClientMoveFields":
                     if(short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
                         this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
                     break;
-                case "skip":
+                case "ClientSkipField":
                     if(action.GetFirst("answer") == "Ja")
                         oCurrentMessage.oCallback(this, oCurrentMessage.sSpecialField);
                     break;
-                case "fieldaction":
+                case "ClientFieldAction":
                     oCurrentMessage.oCallback(this, action.GetFirst("answer"));
                     break;
                 default:
@@ -149,7 +160,7 @@ namespace SchnappsAndLiquor.Game
 
             if (bReturn)
             {
-                oCurrentMessage = oMessageQueue.Count == 0 ? new Message("roll", oPlayerOrder.Next()) : oMessageQueue.Dequeue();
+                oCurrentMessage = oMessageQueue.Count == 0 ? new Message("ClientMoveFields", oPlayerOrder.Next()) : oMessageQueue.Dequeue();
             }
 
             return bReturn;

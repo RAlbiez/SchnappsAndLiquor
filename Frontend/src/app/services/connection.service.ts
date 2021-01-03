@@ -14,6 +14,9 @@ export class ConnectionService {
 
   public gameState: GameState;
 
+  public gameCode = "";
+  public playerName = "unbenannter"
+
   constructor() {
     let location = window.location.href;
     if (environment.production) {
@@ -68,7 +71,7 @@ export class ConnectionService {
       this.setUrlId(this.gameState.sGameId);
     }
     if (!environment.production) {
-      (<any>window).DEBUGSatte = this.gameState;
+      (<any>window).DEBUGSate = this.gameState;
     }
   }
 

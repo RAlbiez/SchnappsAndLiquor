@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SchnappsAndLiquor.Game
 {
-    class Message
+    public class Message
     {
         public string sMessageID = Guid.NewGuid().ToString();
 

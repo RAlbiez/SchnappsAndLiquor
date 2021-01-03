@@ -9,13 +9,15 @@ namespace SchnappsAndLiquor.Game
     {
         public string sName;
         public short shtBoardPosition = 0;
+        public string sColor = "#FF00FF";
 
         public long lngPoints = 0;
 
 
-        public Player(string sNameP)
+        public Player(string sNameP, string sColorP)
         {
             this.sName = sNameP;
+            this.sColor = sColorP;
         }
 
         public short MoveBy(short shtNumFieldsP)

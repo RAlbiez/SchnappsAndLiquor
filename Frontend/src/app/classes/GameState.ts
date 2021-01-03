@@ -15,7 +15,18 @@ export class Player {
   constructor(
     public sName: string,
     public shtBoardPosition: number,
-    public lngPoints: number
+    public lngPoints: number,
+    public sColor: string
+  ) {}
+}
+
+export class Message {
+  constructor(
+    public oChoice,
+    public sMessageID: string,
+    public sMessageType: string,
+    public sPlayerName: string,
+    public sSpecialField: string
   ) {}
 }
 
@@ -27,6 +38,7 @@ export class GameState {
       public oBoard: Board,
       public intMaxFields: number,
       public intWidth: number,
-      public intHeight: number
+      public intHeight: number,
+      public oCurrentMessage: Message
   ) {}
 }
