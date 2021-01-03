@@ -104,7 +104,7 @@ namespace SchnappsAndLiquor.Game
             this.oPlayerOrder.AddPlayer(sNameP);
 
             if(this.oPlayers.Count == 1)
-                oMessageQueue.Enqueue(new Message("roll", sNameP));
+                oCurrentMessage = new Message("roll", sNameP);
         }
         
         public void RemovePlayer(string sNameP)
@@ -119,14 +119,6 @@ namespace SchnappsAndLiquor.Game
         /// <returns>Returns true if the game state was altered in order to push it to every client</returns>
         public bool HandleClientAction(ClientAction action)
         {
-            if(oCurrentMessage == null)
-            {
-                if (oMessageQueue.Count > 0)
-                    oCurrentMessage = oMessageQueue.Dequeue();
-                else
-                    return false;
-            }
-
             if(action.GetFirst("messageid") != oCurrentMessage.sMessageID || action.GetFirst("name") != oCurrentMessage.sPlayerName)
             {
                 return false;
@@ -138,9 +130,7 @@ namespace SchnappsAndLiquor.Game
             {
                 case "roll":
                     if(short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
-                    {
                         this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
-                    }
                     break;
                 case "skip":
                     if(action.GetFirst("answer") == "Ja")
@@ -154,8 +144,10 @@ namespace SchnappsAndLiquor.Game
                     break;
             }
 
-            if (bReturn && oMessageQueue.Count > 0)
-                oCurrentMessage = new Message("roll", oPlayerOrder.Next());
+            if (bReturn)
+            {
+                oCurrentMessage = oMessageQueue.Count == 0 ? new Message("roll", oPlayerOrder.Next()) : oMessageQueue.Dequeue();
+            }
 
             return bReturn;
         }
