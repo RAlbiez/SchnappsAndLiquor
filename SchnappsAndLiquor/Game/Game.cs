@@ -14,6 +14,9 @@ namespace SchnappsAndLiquor.Game
         public List<SnakeOrLadder> oSnakesAndLadders;
         public string sGameId = "";
         public string sLobbyLeader = "";
+        public int intMaxFields = GameParams.MAX_FIELDS;
+        public int intWidth = GameParams.WIDTH;
+        public int intHeight = GameParams.HEIGHT;
         private Message oCurrentMessage;
         private Queue<Message> oMessageQueue = new Queue<Message>();
 

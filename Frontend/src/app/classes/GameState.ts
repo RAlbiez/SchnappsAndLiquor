@@ -23,7 +23,10 @@ export class GameState {
   constructor(
       public sGameId: string,
       public shtCurrentPlayer: number,
-      public oPlayers: Player[],
-      public oBoard: Board
+      public oPlayers: Map<string, Player>,
+      public oBoard: Board,
+      public intMaxFields: number,
+      public intWidth: number,
+      public intHeight: number
   ) {}
 }

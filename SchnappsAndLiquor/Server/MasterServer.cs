@@ -18,11 +18,14 @@ namespace SchnappsAndLiquor.Server
         private Dictionary<string, List<ClientConnection>> oConnections = new Dictionary<string, List<ClientConnection>>();
         private Dictionary<string, string> oLobbyLeader = new Dictionary<string, string>();
         private static Random random = new Random();
+        private long lngConnectionCount = 0;
+        private int intLobbyIdLength = 10;
 
         public MasterServer()
         {
             var port = int.Parse(ConfigurationManager.AppSettings["Port"]);
             var secure = bool.Parse(ConfigurationManager.AppSettings["Secure"]);
+            this.intLobbyIdLength = int.Parse(ConfigurationManager.AppSettings["LobbyIdLength"]);
             this.oHttpServer = new HttpServer(IPAddress.Any, port, secure);
             this.oHttpServer.Log.Level = LogLevel.Info;
             this.oHttpServer.DocumentRootPath = ConfigurationManager.AppSettings["DocumentRootPath"];
@@ -51,7 +54,7 @@ namespace SchnappsAndLiquor.Server
                 this.oGames.Add(id, game);
                 this.oConnections.Add(id, new List<ClientConnection>());
                 this.oLobbyLeader.Add(id, connection.sName);
-                this.oHttpServer.Log.Info("Created new game session " + id + " \t (" + this.oGames.Count + " Total)");
+                this.oHttpServer.Log.Info("Created new game session " + id + this.GetStats());
                 return id;
             }
         }
@@ -69,6 +72,7 @@ namespace SchnappsAndLiquor.Server
                 }
             }
             this.oConnections[id].Add(connection);
+            this.lngConnectionCount++;
             var game = this.oGames[id];
             foreach (var i in game.oPlayers.Keys)
             {
@@ -114,16 +118,22 @@ namespace SchnappsAndLiquor.Server
                 if (j == connection)
                 {
                     oConnections[id].Remove(connection);
+                    this.lngConnectionCount--;
                     if (oConnections[id].Count == 0)
                     {
                         oConnections.Remove(id);
                         oGames.Remove(id);
                         oLobbyLeader.Remove(id);
-                        this.oHttpServer.Log.Info("Closed game session " + id + " \t (" + this.oGames.Count + " Total)");
+                        this.oHttpServer.Log.Info("Closed game session " + id + this.GetStats());
                     }
                     return;
                 }
             }
+        }
+
+        private string GetStats()
+        {
+            return " (" + this.oGames.Count + "\tGames/" + this.lngConnectionCount + "\tPlayers)";
         }
 
         /// <summary>
@@ -136,6 +146,12 @@ namespace SchnappsAndLiquor.Server
             var req = e.Request;
             var res = e.Response;
             var path = req.RawUrl;
+            if (path.Contains("!"))
+            {
+                // Trim away the lobby id for serving files
+                path = path.Substring(0, path.IndexOf("!"));
+            }
+             
             if (path == "/") { path += "index.html"; }
 
             byte[] contents;
@@ -161,10 +177,10 @@ namespace SchnappsAndLiquor.Server
             res.Close(contents, true);
         }
 
-        private static string GenerateLobbyId()
+        private string GenerateLobbyId()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, 10).Select(s => s[random.Next(s.Length)]).ToArray());
+            return new string(Enumerable.Repeat(chars, this.intLobbyIdLength).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         ~MasterServer()

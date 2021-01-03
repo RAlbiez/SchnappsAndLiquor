@@ -25,7 +25,7 @@
             ],
             "styles": [
               "src/styles.css",
-              "../Frontend/node_modules/materialize-css/sass/materialize.scss"
+              "./node_modules/materialize-css/sass/materialize.scss"
             ],
             "scripts": []
           },

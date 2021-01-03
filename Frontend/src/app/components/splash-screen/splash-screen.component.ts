@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Actions, ClientAction } from 'src/app/classes/ClientAction';
 import { ConnectionService } from 'src/app/services/connection.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-splash-screen',
@@ -15,12 +16,21 @@ export class SplashScreenComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
+    if (!environment.production) {
+      this.createLobby();
+      return;
+    }
+
+    var lobbyId = this.connection.getIdFromUrl();
+    if (lobbyId) {
+      this.gameCode = lobbyId;
+      this.joinGame();
+    }
   }
 
   createLobby() {
     var param = new ClientAction(Actions.ClientCreateLobby);
     param.add("name", this.playerName);
-    console.log(param);
     this.connection.sendAction(param);
   }
 

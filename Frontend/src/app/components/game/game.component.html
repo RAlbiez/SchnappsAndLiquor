@@ -12,8 +12,8 @@
       </div>
       <div class="card-action center">
         <ul>
-          <li><button class="btn">ID kopieren</button></li>
-          <li><button class="btn">Link kopieren</button></li>
+          <li><button class="btn" (click)="clipboard.copy(connection.gameState.sGameId)">ID kopieren</button></li>
+          <li><button class="btn" (click)="clipboard.copy(getLocation())">Link kopieren</button></li>
         </ul>
       </div>
     </div>
@@ -30,22 +30,18 @@
 
     <!-- List of players -->
     <div class="collection">
-      <a *ngFor="let i of connection.gameState.oPlayers" class="collection-item">
+      <a *ngFor="let i of getPlayers()" class="collection-item">
         <div>{{ i.sName }}<a class="secondary-content">Points: {{ i.lngPoints}}</a></div>
       </a>
     </div>
   </div>
 
-  <!-- Shameful table-generation 😓 -->
   <div class="col s10">
     <table class="centered-table">
       <tbody>
-        <tr *ngFor="let j of [0,1,2,3,4,5,6,7]">
-          <td *ngFor="let i of connection.gameState.oBoard.oFields.slice(j*8, j*8+8)" class="center">
-            <!-- Experiment with cards components for displaying the fields -->
-            <!-- <div class="card-panel small teal"> -->
-            {{ i.sText }}
-            <!-- </div> -->
+        <tr *ngFor="let rows of getRows()">
+          <td *ngFor="let field of rows" class="center">
+            {{ field.sText }}
           </td>
         </tr>
       </tbody>

@@ -15,9 +15,12 @@ export class ConnectionService {
   public gameState: GameState;
 
   constructor() {
-    let location = "";
+    let location = window.location.href;
     if (environment.production) {
-      location = (<any>window.location);
+      const index = location.search("!");
+      if (index != -1) {
+        location = location.slice(0, index);
+      }
     } else {
       location = "http://localhost:8080";
     }
@@ -35,6 +38,23 @@ export class ConnectionService {
     this.socket.send(JSON.stringify(data));
   }
 
+  public getIdFromUrl(url = window.location.href) {
+    const index = url.search("!");
+    if (index == -1) { return null; }
+    return url.slice(index + 1);
+  }
+
+  public setUrlId(id) {
+    let url = window.location.href;
+    const index = url.search("!");
+    if (index != -1) {
+      url = url.slice(0, index);
+    }
+    window.history.pushState(
+      { }, "", url + "!" + this.gameState.sGameId
+    );
+  }
+
   private onOpen(e: Event) {
     console.log("Wss connection opened");
     this.error = false;
@@ -44,6 +64,12 @@ export class ConnectionService {
   private onMessage(e: MessageEvent) {
     let payload = JSON.parse(e.data);
     this.gameState = payload;
+    if (this.gameState.sGameId) {
+      this.setUrlId(this.gameState.sGameId);
+    }
+    if (!environment.production) {
+      (<any>window).DEBUGSatte = this.gameState;
+    }
   }
 
   private onClose(e: CloseEvent) {
