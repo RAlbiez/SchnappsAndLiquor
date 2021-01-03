@@ -62,7 +62,10 @@ namespace SchnappsAndLiquor.Server
 
         public Game.Game JoinGame(string id, ClientConnection connection)
         {
-            if (!this.oGames.ContainsKey(id)) { return null; }
+            if (!this.oGames.ContainsKey(id)) {
+                connection.SendData("game not found");
+                return null;
+            }
 
             foreach (var i in this.oConnections[id])
             {

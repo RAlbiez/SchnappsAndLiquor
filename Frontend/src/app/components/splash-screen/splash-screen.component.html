@@ -28,6 +28,7 @@
             <button class="btn" (click)="joinGame()">
                 Spiel beitreten
             </button>
+            <div style="color: red;" *ngIf="connection.lobbyNotFound">Gibts nicht</div>
         </div>
     </div>
 </div>

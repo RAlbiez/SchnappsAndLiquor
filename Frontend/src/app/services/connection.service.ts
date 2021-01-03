@@ -17,6 +17,7 @@ export class ConnectionService {
   public gameCode = "";
   public playerName = "unbenannter"
   public nameError = false;
+  public lobbyNotFound = false;
 
   constructor() {
     let location = window.location.href;
@@ -75,7 +76,12 @@ export class ConnectionService {
       this.nameError = true;
       return;
     }
+    if (e.data === "game not found") {
+      this.lobbyNotFound= true;
+      return;
+    }
     this.nameError = false;
+    this.lobbyNotFound= false;
     let payload = JSON.parse(e.data);
     this.gameState = payload;
     if (this.gameState.sGameId) {
