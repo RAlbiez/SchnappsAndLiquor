@@ -70,7 +70,7 @@ namespace SchnappsAndLiquor.Game
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = false;
             sText = "Ziel";
-            shtBoardPos = (short)(GameParams.MAX_FIELDS-1);
+            shtBoardPos = (short)(GameParams.MAX_FIELDS - 1);
         }
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
@@ -119,12 +119,12 @@ namespace SchnappsAndLiquor.Game
 
     public class DrinkField : IField
     {
-        private List<(string sTextToUse,short shtMinRange,short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Beleidige einen Mittrinker deiner Wahl. Trink {0} Schluck.", 1,3),
-            ("Trink {0} und behalt sie im Mund bis du wieder an der Reihe bist.", 1,3),
-            ("Schick dein letztes Bild an eine beliebige WhatsApp Gruppe und trink {0}", 1,3),
-            ("Trink {0} und geh eine Runde auf die stille Treppe", 1, 3)
+            ("Trink {0} und behalte sie im Mund, bis du wieder an der Reihe bist.", 1,3),
+            ("Schick dein letztes Bild an eine beliebige WhatsApp-Gruppe und trink {0}.", 1,3),
+            ("Trink {0} und geh eine Runde auf die stille Treppe.", 1, 3)
         };
 
         public Guid gKey { get; set; }
@@ -160,7 +160,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Komme aus dem Gefängnis frei. Warte falsches Spiel...Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4)
+            ("Komme aus dem Gefängnis frei. Warte, falsches Spiel ... Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4)
         };
 
         public Guid gKey { get; set; }
@@ -200,7 +200,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Tausche die Position mit einem beliebigem Spieler, ihr trinkt beide {0}",1,4)
+            ("Tausche die Position mit einem beliebigen Spieler, ihr trinkt beide {0}.",1,4)
         };
 
         public Guid gKey { get; set; }
@@ -225,7 +225,7 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = shtPos;
         }
 
-        public (Choice oChoice, Action<Game,string> Callback) FieldAction(string sPlayerName, Game oGame)
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
 
             return (new Choice(oGame.oPlayers.Keys, sPlayerName, true, shtSkipCost), ReturnAction);
@@ -250,7 +250,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Du trinkst {0}, wähle einen anderen Spieler, er trinkt das doppelte.", 1,3)
+            ("Du trinkst {0}, wähle einen anderen Spieler, er trinkt das Doppelte.", 1,3)
         };
 
         public Guid gKey { get; set; }
@@ -296,7 +296,7 @@ namespace SchnappsAndLiquor.Game
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Rotz auf deinen Tisch oder trinke {0}.", 3,5),
-            ("Ruf deiner Mutti an und sag das du sie lieb hast oder trinke {0}", 2,5)
+            ("Ruf deine Mutti an und sag, dass du sie lieb hast oder trinke {0}.", 2,5)
         };
 
         public Guid gKey { get; set; }
@@ -321,7 +321,7 @@ namespace SchnappsAndLiquor.Game
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            return (new Choice(new List<string>() {"Ja", "Nein" }, sPlayerName), ReturnAction);
+            return (new Choice(new List<string>() { "Ja", "Nein" }, sPlayerName), ReturnAction);
         }
 
         public void ReturnAction(Game oGame, string sAnswer)
