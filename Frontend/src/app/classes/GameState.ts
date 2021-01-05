@@ -2,7 +2,7 @@ export class Field {
   constructor(
     public sText: string,
     public shtBoardPos: number
-  ) {}
+  ) { }
 }
 
 export class Board {
@@ -17,7 +17,15 @@ export class Player {
     public shtBoardPosition: number,
     public lngPoints: number,
     public sColor: string
-  ) {}
+  ) { }
+}
+
+export class SnakeOrLadder {
+  constructor(
+    public shtSkipCost:  number,
+    public shtStartPoint:  number,
+    public shtEndPoint:  number,
+  ) { }
 }
 
 export class Choice {
@@ -37,7 +45,7 @@ export class Message {
     public sMessageType: string,
     public sPlayerName: string,
     public sSpecialField: string,
-  ) {}
+  ) { }
 }
 
 
@@ -51,6 +59,7 @@ export class GameState {
       public intWidth: number,
       public intHeight: number,
       public oCurrentMessage: Message,
-      public sLobbyLeader: string
-  ) {}
+      public sLobbyLeader: string,
+      public oSnakesAndLadders: SnakeOrLadder[]
+  ) { }
 }

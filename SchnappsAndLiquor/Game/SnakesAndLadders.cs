@@ -7,9 +7,9 @@ namespace SchnappsAndLiquor.Game
 {
     public class SnakeOrLadder
     {
-        short shtStartPoint;
-        short shtEndPoint;
-        short shtSkipCost;
+        public short shtStartPoint;
+        public short shtEndPoint;
+        public short shtSkipCost;
 
         public SnakeOrLadder(Game oGame, bool bSnake)
         {

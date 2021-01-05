@@ -12,6 +12,16 @@
       </div>
     </div>
 
+    <!-- Display dice & dice button -->
+    <div class="card grey lighten-2">
+      <div class="card-content">
+        <app-dice #dice (rolled)="afterRoll($event)"></app-dice>
+      </div>
+      <div class="card-action center">
+        <button class="btn waves-effect waves-light teal" (click)="dice.roll()" [disabled]="!canRoll()">Würfeln</button>
+      </div>
+    </div>
+
     <!-- Field description card -->
     <div class="card-panel grey lighten-2" *ngIf="getCurrentCoice()">
       <span>{{ getCurrentFieldText() }}
@@ -29,18 +39,6 @@
       </div>
     </div>
 
-    <!-- Display dice & dice button -->
-    <div class="card grey lighten-2">
-      <div class="card-content">
-        <div class="dice">
-          <div *ngFor="let i of [].constructor(diceNumber)" class="dice-eye"></div>
-        </div>
-      </div>
-      <div class="card-action center">
-        <button class="btn waves-effect waves-light teal" (click)="roll()" [disabled]="!canRoll()">Würfeln</button>
-      </div>
-    </div>
-
     <!-- List of players -->
     <div class="collection">
       <a *ngFor="let player of getPlayers()" class="collection-item"
@@ -48,9 +46,9 @@
         <div>
           <div [style.background]="player.sColor" class="color-dot"></div>
           {{ player.sName }}
+          <ng-container *ngIf="player.sName === connection.playerName">🍆</ng-container>
           <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">👑</ng-container>
-          <!-- <ng-container *ngIf="player.sName === connection.playerName">(du)</ng-container> -->
-          <a class="secondary-content">🍺: {{ player.lngPoints}}</a>
+          <a class="secondary-content">🍺: {{ player.lngPoints }}</a>
         </div>
       </a>
     </div>
@@ -67,10 +65,13 @@
                 <div [style.background]="player.sColor" class="color-dot"></div>
               </div>
             </ng-container>
+            <div [id]="'field' + field.shtBoardPos"></div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <app-snake-or-ladder *ngFor="let snek of getSnakes()" [snek]="snek"></app-snake-or-ladder>
 
 </div>

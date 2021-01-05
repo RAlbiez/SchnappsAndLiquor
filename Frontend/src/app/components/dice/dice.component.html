@@ -1,0 +1,7 @@
+<div class="dice">
+  <div *ngFor="let i of [].constructor(diceNumber)"
+      class="dice-eye"
+      [style.float]="coinFlip() ? 'left' : 'right'"
+      [style.display]="coinFlip() ? 'inline-block' : 'block'">
+  </div>
+</div>

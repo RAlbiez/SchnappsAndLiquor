@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { Actions, ClientAction } from 'src/app/classes/ClientAction';
 import { ClipboardService } from 'src/app/services/clipboard.service';
 import { ConnectionService } from 'src/app/services/connection.service';
@@ -10,16 +9,12 @@ import { ConnectionService } from 'src/app/services/connection.service';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-
-  diceNumber = 1;
-  rolling = false;
   constructor(
     public connection: ConnectionService,
     public clipboard: ClipboardService
   ) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   public openNewTab(url: string) {
     window.open(url, "_blank");
@@ -62,23 +57,6 @@ export class GameComponent implements OnInit {
     return false;
   }
 
-  public roll() {
-    if (this.rolling) { return; }
-    this.rolling = true;
-    var iterations = 20;
-    var interval = setInterval(() => {
-      this.diceNumber = Math.round(Math.random() * 5 + 1);
-      if (!(iterations--)) {
-        clearInterval(interval);
-        var param = new ClientAction(Actions.ClientMoveFields);
-        param.add("answer", this.diceNumber + "");
-        param.add("messageid", this.connection.gameState.oCurrentMessage.sMessageID);
-        this.connection.sendAction(param);
-        this.rolling = false;
-      }
-    }, 100);
-  }
-
   public getCurrentCoice() {
     return this.connection.gameState.oCurrentMessage.oChoice;
   }
@@ -88,9 +66,19 @@ export class GameComponent implements OnInit {
     return this.connection.gameState.oBoard.oFields[position].sText;
   }
 
+  public getSnakes() {
+    return this.connection.gameState.oSnakesAndLadders;
+  }
+
   public skip() {
     var param = new ClientAction(Actions.ClientSkipField);
     param.add("answer", "Ja");
+    this.connection.sendAction(param);
+  }
+
+  public afterRoll(diceNumber) {
+    var param = new ClientAction(Actions.ClientMoveFields);
+    param.add("answer", diceNumber + "");
     this.connection.sendAction(param);
   }
 
