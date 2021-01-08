@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+
+  game:
+    image: theforcer/SchnappsAndLiquor
+    container_name: SchnappsAndLiquor
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8080:8080
