@@ -8,10 +8,6 @@ namespace SchnappsAndLiquor.Game
 {
     public interface IField
     {
-        [JsonIgnore]
-        Guid gKey { get; set; }
-        [JsonIgnore]
-        bool bCanAppearMulitpleTimes { get; set; }
         bool bIsStartPoint { get; set; }
         bool bIsEndPoint { get; set; }
         string sText { get; set; }
@@ -27,18 +23,7 @@ namespace SchnappsAndLiquor.Game
 
         public IField Next(Game oGame, short shtPos)
         {
-            IField oGenerated;
-            bool bNewFieldGeneratedSuccessfully = true;
-            do
-            {
-                oGenerated = FieldTypes.GetRandomField();
-
-                if (oGenerated.bCanAppearMulitpleTimes && !oAlreadyAdded.Add(oGenerated.GetType()))
-                {
-                    bNewFieldGeneratedSuccessfully = false;
-                }
-            }
-            while (!bNewFieldGeneratedSuccessfully);
+            IField oGenerated = FieldTypes.GetRandomField();
 
             oGenerated.Init(oGame, shtPos);
 
