@@ -83,9 +83,10 @@ namespace SchnappsAndLiquor.Game
 
     public class MoveBackByField : IField
     {
-        private List<string> oReasons = new List<string>()
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            "Hättest eigentlich nach vorne laufen dürfen, warst aber zu dumm. Gehe {0} zurück."
+            ("Hättest eigentlich nach vorne laufen dürfen, warst aber zu dumm. Gehe {0} zurück.", -2 , 0),
+            ("Kein Rosinenbrötchen mit Leberwurst, keine 3 Bier, Faktor nicht wieder drinne. Gehe {0} zurück.", -3, -1)
         };
 
         public Guid gKey { get; set; }
@@ -99,13 +100,13 @@ namespace SchnappsAndLiquor.Game
 
         public void Init(Game oGame, short shtPos)
         {
-            shtNumberToMove = (short)GameParams.oRandomInstance.Next(-2, 0);
-            string sTextToUse = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
 
+            var oReason= oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtNumberToMove = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = true;
-            sText = String.Format(sTextToUse, shtNumberToMove);
+            sText = String.Format(oReason.sTextToUse, Math.Abs(shtNumberToMove));
             shtBoardPos = shtPos;
         }
 
@@ -121,10 +122,11 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Beleidige einen Mittrinker deiner Wahl. Trink {0} Schluck.", 1,3),
+            ("Beleidige einen Mittrinker deiner Wahl. Trink {0} Schlück/e.", 1,3),
             ("Trink {0} und behalte sie im Mund, bis du wieder an der Reihe bist.", 1,3),
             ("Schick dein letztes Bild an eine beliebige WhatsApp-Gruppe und trink {0}.", 1,3),
-            ("Trink {0} und geh eine Runde auf die stille Treppe.", 1, 3)
+            ("Trink {0} und geh eine Runde auf die stille Treppe.", 1, 3),
+            ("Alle hören ein Lied deiner Wahl, trink dafür {0}", 2, 4)
         };
 
         public Guid gKey { get; set; }
@@ -211,14 +213,12 @@ namespace SchnappsAndLiquor.Game
         public bool bIsEndPoint { get; set; }
 
         private short shtNumberToDrink;
-        private short shtSkipCost;
 
         public void Init(Game oGame, short shtPos)
         {
             var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
             shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
 
-            shtSkipCost = 3;
             gKey = Guid.NewGuid();
             bCanAppearMulitpleTimes = false;
             sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
@@ -228,7 +228,7 @@ namespace SchnappsAndLiquor.Game
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
 
-            return (new Choice(oGame.oPlayers.Keys, sPlayerName, true, shtSkipCost), ReturnAction);
+            return (new Choice(oGame.oPlayers.Keys, sPlayerName, true), ReturnAction);
         }
 
         public void ReturnAction(Game oGame, string sAnswer)

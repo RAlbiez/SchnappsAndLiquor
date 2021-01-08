@@ -1,6 +1,7 @@
 ﻿using SchnappsAndLiquor.Net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -42,31 +43,57 @@ namespace SchnappsAndLiquor.Game
 
         public void WinGame(string sPlayerName)
         {
-
+            oMessageQueue.Enqueue(new Message("GameWon", sPlayerName));
         }
 
         protected void ActivateField(string sPlayerName, short shtFieldNumber)
         {
             var oReturn = oBoard[shtFieldNumber].FieldAction(sPlayerName, this);
 
-            if(oBoard[shtFieldNumber].bIsStartPoint)
-            {
-                //Messages for snakes and ladders
-            }
+            Message oMessageFieldAction = null;
+            Message oMessageSkipField = null;
 
-
-            if(oReturn.oChoice != null)
+            if (oReturn.oChoice != null)
             {
-                Message oMessage = new Message("FieldAction", sPlayerName, oReturn.oChoice, oReturn.Callback);
+                oMessageFieldAction = new Message("FieldAction", sPlayerName, oReturn.oChoice, oReturn.Callback);
 
                 if (oReturn.oChoice.bCanSkip)
                 {
-                    oMessageQueue.Enqueue(new Message("SkipField", sPlayerName, 
-                        new Choice(new List<string> { "Ja", "Nein" }, sPlayerName), DequeueMessage, oMessage.sMessageID));
+                    if (oPlayers[sPlayerName].lngPoints >= shtFieldNumber)
+                    {
+                        oMessageSkipField = new Message("SkipField", sPlayerName,
+                        new Choice(new List<string> { "Ja", "Nein" }, sPlayerName), DequeueMessage, new List<string>() { oMessageFieldAction.sMessageID });
+                    }
+                    else
+                    {
+                        oMessageSkipField = new Message("NoSkipField", sPlayerName);
+                    }
                 }
-
-                oMessageQueue.Enqueue(oMessage);
             }
+            else
+            {
+                oMessageFieldAction = new Message("NoFieldAction", sPlayerName);
+            }
+
+            if (oBoard[shtFieldNumber].bIsStartPoint)
+            {
+                if(oPlayers[sPlayerName].lngPoints >= shtFieldNumber)
+                {
+                    oMessageQueue.Enqueue(new Message("NoSnakeOrLadder", sPlayerName));
+                }
+                else
+                {
+                    short shtEndPoint = oSnakesAndLadders.First(x => x.shtStartPoint == shtFieldNumber).shtEndPoint;
+                    oMessageQueue.Enqueue(new Message("SnakeOrLadder", sPlayerName));
+                    MovePlayerBy(sPlayerName, (short)(shtEndPoint - shtFieldNumber));
+                    return;
+                }
+            }
+
+            if(oMessageSkipField != null)
+                oMessageQueue.Enqueue(oMessageSkipField);
+            if(oMessageFieldAction != null)
+                oMessageQueue.Enqueue(oMessageFieldAction);
         }
 
         protected void DequeueMessage(Game oGame, string sAnswer)
@@ -84,6 +111,13 @@ namespace SchnappsAndLiquor.Game
         public void MovePlayerBy(string sPlayerName, short shtNumOfFields)
         {
             Player oPlayer = this.oPlayers[sPlayerName];
+
+            if (oPlayer.shtBoardPosition + shtNumOfFields > GameParams.MAX_FIELDS)
+            {
+                oMessageQueue.Enqueue(new Message("MissedEnd", sPlayerName));
+                return;
+            }
+
             short shtNewPos = oPlayer.MoveBy(shtNumOfFields);
             this.ActivateField(sPlayerName, shtNewPos);
         }
@@ -148,10 +182,19 @@ namespace SchnappsAndLiquor.Game
                     break;
                 case "SkipField":
                     if(action.GetFirst("answer") == "Ja")
-                        oCurrentMessage.oCallback(this, oCurrentMessage.sSpecialField);
+                        foreach(string sMessageToDequeue in oCurrentMessage.oAdditionalFields)
+                            oCurrentMessage.oCallback(this, sMessageToDequeue);
                     break;
                 case "FieldAction":
                     oCurrentMessage.oCallback(this, action.GetFirst("answer"));
+                    break;
+                case "MissedEnd":
+                case "NoSkipField":
+                case "NoFieldAction":
+                case "WinGame":
+                case "NoSnakeOrLadder":
+                case "SnakeOrLadder":
+                    bReturn = true;
                     break;
                 default:
                     bReturn = false;

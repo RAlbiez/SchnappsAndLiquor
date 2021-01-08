@@ -12,15 +12,15 @@ namespace SchnappsAndLiquor.Game
         public string sMessageID = Guid.NewGuid().ToString();
 
         public string sMessageType;
-        public string sSpecialField;
+        public List<string > oAdditionalFields;
         public string sPlayerName;
         public Choice oChoice;
         [JsonIgnore]
         public Action<Game, string> oCallback;
 
-        public Message(string sMessageTypeP, string sPlayerNameP, Choice oChoiceP, Action<Game, string> oCallbackP, string sSpecialFieldP) : this(sMessageTypeP, sPlayerNameP, oChoiceP, oCallbackP)
+        public Message(string sMessageTypeP, string sPlayerNameP, Choice oChoiceP, Action<Game, string> oCallbackP, List<string> oAdditionalFieldsP) : this(sMessageTypeP, sPlayerNameP, oChoiceP, oCallbackP)
         {
-            sSpecialField = sSpecialFieldP;
+            oAdditionalFields = oAdditionalFieldsP;
         }
 
         public Message(string sMessageTypeP, string sPlayerNameP, Choice oChoiceP, Action<Game,string> oCallbackP) : this(sMessageTypeP, sPlayerNameP)

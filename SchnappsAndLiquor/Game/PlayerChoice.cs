@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace SchnappsAndLiquor.Game
 {
     public class Choice
     {
         public string[] oChoices;
+        [JsonIgnore]
         public bool bCanSkip = false;
-        public short shtSkipCost = 0;
         public string sPlayer;
         public string sSpecialType;
 
@@ -19,10 +20,9 @@ namespace SchnappsAndLiquor.Game
             sPlayer = sPlayerP;
         }
 
-        public Choice(IEnumerable<string> oInput, string sPlayerP, bool bCanSkipP, short shtSkipCostP) : this(oInput, sPlayerP)
+        public Choice(IEnumerable<string> oInput, string sPlayerP, bool bCanSkipP) : this(oInput, sPlayerP)
         {
             bCanSkip = bCanSkipP;
-            shtSkipCost = shtSkipCostP;
         }
     }
 }
