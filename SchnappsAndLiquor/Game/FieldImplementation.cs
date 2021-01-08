@@ -108,9 +108,12 @@ namespace SchnappsAndLiquor.Game
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.MovePlayerBy(sPlayerName, shtNumberToMove);
+            return (null, ReturnAction);
+        }
 
-            return (null, null);
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            oGame.MovePlayerBy(oGame.GetCurentPlayer().sName, shtNumberToMove);
         }
     }
 
@@ -144,9 +147,12 @@ namespace SchnappsAndLiquor.Game
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.AddPointsToPlayer(sPlayerName, shtNumberToDrink);
+            return (null, ReturnAction);
+        }
 
-            return (null, null);
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            oGame.AddPointsToPlayer(oGame.GetCurentPlayer().sName, shtNumberToDrink);
         }
     }
 
@@ -179,10 +185,13 @@ namespace SchnappsAndLiquor.Game
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            oGame.AddPointsToPlayer(sPlayerName, shtNumberToDrink);
-            oGame.MovePlayerBy(sPlayerName, shtNumberToMove);
+            return (null, ReturnAction);
+        }
 
-            return (null, null);
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            oGame.AddPointsToPlayer(oGame.GetCurentPlayer().sName, shtNumberToDrink);
+            oGame.MovePlayerBy(oGame.GetCurentPlayer().sName, shtNumberToMove);
         }
     }
 

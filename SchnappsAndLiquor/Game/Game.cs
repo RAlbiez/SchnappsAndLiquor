@@ -72,7 +72,7 @@ namespace SchnappsAndLiquor.Game
             }
             else
             {
-                oMessageFieldAction = new Message("NoFieldAction", sPlayerName);
+                oMessageFieldAction = new Message("NoFieldAction", sPlayerName, null, oReturn.Callback);
             }
 
             if (oBoard[shtFieldNumber].bIsStartPoint)
@@ -115,6 +115,7 @@ namespace SchnappsAndLiquor.Game
             if (oPlayer.shtBoardPosition + shtNumOfFields > GameParams.MAX_FIELDS)
             {
                 oMessageQueue.Enqueue(new Message("MissedEnd", sPlayerName));
+                this.ActivateField(sPlayerName, oPlayer.shtBoardPosition);
                 return;
             }
 
@@ -188,9 +189,11 @@ namespace SchnappsAndLiquor.Game
                 case "FieldAction":
                     oCurrentMessage.oCallback(this, action.GetFirst("answer"));
                     break;
+                case "NoFieldAction":
+                    oCurrentMessage.oCallback(null, "");
+                    break;
                 case "MissedEnd":
                 case "NoSkipField":
-                case "NoFieldAction":
                 case "WinGame":
                 case "NoSnakeOrLadder":
                 case "SnakeOrLadder":
