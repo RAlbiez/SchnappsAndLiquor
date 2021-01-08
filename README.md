@@ -53,7 +53,7 @@ For deployment, using Docker and a reverse Proxy makes things a little easier an
 
 ### Docker
 
-You can use the Dockerfile to build your own image or use our docker-compose file using our official image from the Dockerhub.
+You can use the Dockerfile to build your own image or use our docker-compose file using our [official image](https://hub.docker.com/r/theforcer/schnappsandliquor) from the Dockerhub.
 
 Building your own Docker image:
 ```

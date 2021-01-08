@@ -3,7 +3,7 @@ version: "3.8"
 services:
 
   game:
-    image: theforcer/SchnappsAndLiquor
+    image: theforcer/schnappsandliquor:dev
     container_name: SchnappsAndLiquor
     restart: unless-stopped
     tty: true
