@@ -18,7 +18,7 @@
         <app-dice #dice (rolled)="afterRoll($event)"></app-dice>
       </div>
       <div class="card-action center">
-        <button class="btn waves-effect waves-light teal" (click)="dice.roll()" [disabled]="!canRoll()">Würfeln</button>
+        <button class="btn pulse teal" (click)="dice.roll()" [disabled]="!canRoll()">Würfeln</button>
       </div>
     </div>
 
