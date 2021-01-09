@@ -51,7 +51,7 @@ namespace SchnappsAndLiquor.Game
         {
             intRecursionCounter++;
 
-            if (intRecursionCounter > 50)
+            if (intRecursionCounter > 5)
             {
                 foreach(Player oPlayer in oPlayers.Values)
                 {
@@ -91,15 +91,16 @@ namespace SchnappsAndLiquor.Game
 
             if (oBoard[shtFieldNumber].bIsStartPoint)
             {
-                if(oPlayers[sPlayerName].lngPoints >= shtFieldNumber)
+                SnakeOrLadder oSnakeOrLadder = oSnakesAndLadders.First(x => x.shtStartPoint == shtFieldNumber);
+                if ((oPlayers[sPlayerName].lngPoints >= shtFieldNumber && oSnakeOrLadder.bSnake) 
+                    || (oPlayers[sPlayerName].lngPoints < shtFieldNumber && !oSnakeOrLadder.bSnake))
                 {
                     oMessageQueue.Enqueue(new Message("NoSnakeOrLadder", sPlayerName));
                 }
                 else
                 {
-                    short shtEndPoint = oSnakesAndLadders.First(x => x.shtStartPoint == shtFieldNumber).shtEndPoint;
                     oMessageQueue.Enqueue(new Message("SnakeOrLadder", sPlayerName));
-                    MovePlayerBy(sPlayerName, (short)(shtEndPoint - shtFieldNumber));
+                    MovePlayerBy(sPlayerName, (short)(oSnakeOrLadder.shtEndPoint - shtFieldNumber));
                     return;
                 }
             }

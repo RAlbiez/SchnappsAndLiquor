@@ -10,20 +10,22 @@ namespace SchnappsAndLiquor.Game
         public short shtStartPoint;
         public short shtEndPoint;
         public short shtSkipCost;
+        public bool bSnake;
 
-        public SnakeOrLadder(Game oGame, bool bSnake)
+        public SnakeOrLadder(Game oGame, bool bSnakeP)
         {
+            bSnake = bSnakeP;
             int intLinesToSkip = GameParams.oRandomInstance.Next(1, 3);
             bool bGeneratedSuccessfully = false;
 
             while (!bGeneratedSuccessfully)
             {
                 int intPos1 = GameParams.oRandomInstance.Next(1, GameParams.MAX_FIELDS - 2);
-                int intPos2 = bSnake ?
+                int intPos2 = bSnakeP ?
                                   intPos1 - intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1)
                                 : intPos1 + intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1);
 
-                if (bSnake)
+                if (bSnakeP)
                 {
                     if (intPos2 < 1)
                         continue;
