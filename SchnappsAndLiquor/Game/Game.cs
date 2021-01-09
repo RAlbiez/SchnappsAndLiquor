@@ -9,6 +9,7 @@ namespace SchnappsAndLiquor.Game
 {
     public class Game
     {
+        private int intRecursionCounter = 0;
         public Board oBoard = new Board();
         public Dictionary<string, Player> oPlayers = new Dictionary<string, Player>();
         public PlayerOrder oPlayerOrder = new PlayerOrder();
@@ -48,6 +49,19 @@ namespace SchnappsAndLiquor.Game
 
         protected void ActivateField(string sPlayerName, short shtFieldNumber)
         {
+            intRecursionCounter++;
+
+            if (intRecursionCounter > 50)
+            {
+                foreach(Player oPlayer in oPlayers.Values)
+                {
+                    oPlayer.AddPoints(5);
+                }
+
+                oMessageQueue.Enqueue(new Message("StackOverflowExceptionAchieved", sPlayerName));
+                return;
+            }
+
             var oReturn = oBoard[shtFieldNumber].FieldAction(sPlayerName, this);
 
             Message oMessageFieldAction = null;
@@ -178,8 +192,11 @@ namespace SchnappsAndLiquor.Game
             switch (oCurrentMessage.sMessageType)
             {
                 case "MoveFields":
-                    if(short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
+                    if (short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
+                    {
+                        intRecursionCounter = 0;
                         this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
+                    }
                     break;
                 case "SkipField":
                     if(action.GetFirst("answer") == "Ja")
@@ -192,6 +209,7 @@ namespace SchnappsAndLiquor.Game
                 case "NoFieldAction":
                     oCurrentMessage.oCallback(null, "");
                     break;
+                case "StackOverflowExceptionAchieved":
                 case "MissedEnd":
                 case "NoSkipField":
                 case "WinGame":
