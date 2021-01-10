@@ -8,7 +8,7 @@ export class Field {
 export class Board {
   constructor(
     public oFields: Field[]
-  ){ }
+  ) { }
 }
 
 export class Player {
@@ -22,9 +22,10 @@ export class Player {
 
 export class SnakeOrLadder {
   constructor(
-    public shtSkipCost:  number,
-    public shtStartPoint:  number,
-    public shtEndPoint:  number,
+    public shtSkipCost: number,
+    public shtStartPoint: number,
+    public shtEndPoint: number,
+    public bSnake: boolean
   ) { }
 }
 
@@ -51,15 +52,15 @@ export class Message {
 
 export class GameState {
   constructor(
-      public sGameId: string,
-      public shtCurrentPlayer: number,
-      public oPlayers: Map<string, Player>,
-      public oBoard: Board,
-      public intMaxFields: number,
-      public intWidth: number,
-      public intHeight: number,
-      public oCurrentMessage: Message,
-      public sLobbyLeader: string,
-      public oSnakesAndLadders: SnakeOrLadder[]
+    public sGameId: string,
+    public shtCurrentPlayer: number,
+    public oPlayers: Map<string, Player>,
+    public oBoard: Board,
+    public intMaxFields: number,
+    public intWidth: number,
+    public intHeight: number,
+    public oCurrentMessage: Message,
+    public sLobbyLeader: string,
+    public oSnakesAndLadders: SnakeOrLadder[]
   ) { }
 }

@@ -18,7 +18,7 @@
         <app-dice #dice (rolled)="afterRoll($event)"></app-dice>
       </div>
       <div class="card-action center">
-        <button class="btn pulse teal" (click)="dice.roll()" [disabled]="!canRoll()">Würfeln</button>
+        <button class="btn teal" (click)="dice.roll()" [disabled]="!canRoll()">Würfeln</button>
       </div>
     </div>
 
@@ -52,14 +52,23 @@
         </div>
       </a>
     </div>
+
+    <!-- Temporarily sisplay snakes & ladders -->
+    <div *ngFor="let snek of getSnakes()" [snek]="snek" class="center">
+      <a *ngIf="snek.bSnake; else ladder">🐍</a>
+      <ng-template #ladder><a>🧬</a></ng-template>
+      {{ snek.shtStartPoint+1 }} --> {{
+      snek.shtEndPoint+1 }}
+    </div>
   </div>
 
+  <!-- Playfield -->
   <div class="col s10">
     <table class="centered-table">
       <tbody>
         <tr *ngFor="let rows of getRows()">
-          <td *ngFor="let field of rows" class="center">
-            {{ field.sText }}
+          <td *ngFor="let field of rows" class="center gamefield">
+            <b>{{ field.shtBoardPos+1 }}</b> - {{ field.sText }}
             <ng-container *ngFor="let player of getPlayers()">
               <div *ngIf="player.shtBoardPosition === field.shtBoardPos">
                 <div [style.background]="player.sColor" class="color-dot"></div>
