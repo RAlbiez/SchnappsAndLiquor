@@ -45,7 +45,7 @@ export class Message {
     public sMessageID: string,
     public sMessageType: string,
     public sPlayerName: string,
-    public sSpecialField: string,
+    public oAdditionalFields: string[]
   ) { }
 }
 
