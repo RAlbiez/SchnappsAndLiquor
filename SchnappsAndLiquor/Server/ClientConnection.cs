@@ -27,40 +27,49 @@ namespace SchnappsAndLiquor.Server
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            var action = JsonSerializer.Deserialize<ClientAction>(e.Data);
-            if (action.Type == "ClientCreateLobby")
+            try
             {
-                this.sName = action.GetFirst("name");
-                var id = this.oMasterServer.CreateGame(this);
-                this.oCurrentGame = this.oMasterServer.JoinGame(id, this);
-            }
-            else if (action.Type == "ClientJoinGame")
-            {
-                this.sName = action.GetFirst("name");
-                var id = action.GetFirst("lobbyId");
-                this.oCurrentGame = this.oMasterServer.JoinGame(id, this);
-            }
-            else if (action.Type == "ClientKick")
-            {
-                this.sName = action.GetFirst("name");
-                this.oMasterServer.KickPlayer(this.oCurrentGame.sGameId, sName, this);
-                return;
-            }
-            else
-            {
-                if (this.oCurrentGame != null)
+                var action = JsonSerializer.Deserialize<ClientAction>(e.Data);
+                if (action.Type == "ClientCreateLobby")
                 {
-                    if (!this.oCurrentGame.HandleClientAction(action, this.sName))
+                    this.sName = action.GetFirst("name");
+                    var id = this.oMasterServer.CreateGame(this);
+                    this.oCurrentGame = this.oMasterServer.JoinGame(id, this);
+                }
+                else if (action.Type == "ClientJoinGame")
+                {
+                    this.sName = action.GetFirst("name");
+                    var id = action.GetFirst("lobbyId");
+                    this.oCurrentGame = this.oMasterServer.JoinGame(id, this);
+                }
+                else if (action.Type == "ClientKick")
+                {
+                    var sName = action.GetFirst("name");
+                    this.oMasterServer.KickPlayer(this.oCurrentGame.sGameId, sName, this);
+                    return;
+                }
+                else
+                {
+                    if (this.oCurrentGame != null)
                     {
-                        return;
+                        if (!this.oCurrentGame.HandleClientAction(action, this.sName))
+                        {
+                            return;
+                        }
                     }
                 }
+
+                if (this.oCurrentGame != null)
+                {
+                    this.oMasterServer.PushGameState(this.oCurrentGame.sGameId);
+                }
+            }
+            catch (Exception exeption)
+            {
+
+                this.Log.Error(exeption.ToString());
             }
 
-            if (this.oCurrentGame != null)
-            {
-                this.oMasterServer.PushGameState(this.oCurrentGame.sGameId);
-            }
         }
     }
 }

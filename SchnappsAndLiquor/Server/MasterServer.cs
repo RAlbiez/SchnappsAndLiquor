@@ -45,24 +45,22 @@ namespace SchnappsAndLiquor.Server
 
         public string CreateGame(ClientConnection connection)
         {
-            while (true)
-            {
-                var id = GenerateLobbyId();
-                if (this.oGames.ContainsKey(id)) { continue; }
-                var game = new Game.Game();
-                game.sGameId = id;
-                this.oGames.Add(id, game);
-                this.oConnections.Add(id, new List<ClientConnection>());
-                this.oLobbyLeader.Add(id, connection.sName);
-                game.sLobbyLeader = connection.sName;
-                this.oHttpServer.Log.Info("Created new game session " + id + this.GetStats());
-                return id;
-            }
+            var id = GenerateLobbyId();
+            if (id is null) { return null; }
+            var game = new Game.Game();
+            game.sGameId = id;
+            this.oGames.Add(id, game);
+            this.oConnections.Add(id, new List<ClientConnection>());
+            this.oLobbyLeader.Add(id, connection.sName);
+            game.sLobbyLeader = connection.sName;
+            this.oHttpServer.Log.Info("Created new game session " + id + this.GetStats());
+            return id;
         }
 
         public Game.Game JoinGame(string id, ClientConnection connection)
         {
-            if (!this.oGames.ContainsKey(id)) {
+            if (!this.oGames.ContainsKey(id))
+            {
                 connection.SendData("game not found");
                 return null;
             }
@@ -91,18 +89,19 @@ namespace SchnappsAndLiquor.Server
             return game;
         }
 
-        public bool KickPlayer(string id, string name, ClientConnection connetion)
+        public void KickPlayer(string id, string name, ClientConnection connetion)
         {
-            if (connetion.sName != this.oLobbyLeader[id]) { return false; }
+            if (connetion.sName != this.oLobbyLeader[id]) { return; }
             foreach (var i in this.oConnections[id])
             {
                 if (i.sName == name)
                 {
                     i.CloseConnection();
                     this.oGames[id].RemovePlayer(name);
+                    PushGameState(id);
+                    return;
                 }
             }
-            return true;
         }
 
         public void PushGameState(string id)
@@ -156,7 +155,7 @@ namespace SchnappsAndLiquor.Server
                 // Trim away the lobby id for serving files
                 path = path.Substring(0, path.IndexOf("!"));
             }
-             
+
             if (path == "/") { path += "index.html"; }
 
             byte[] contents;
@@ -185,7 +184,12 @@ namespace SchnappsAndLiquor.Server
         private string GenerateLobbyId()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, this.intLobbyIdLength).Select(s => s[random.Next(s.Length)]).ToArray());
+            for (int i = 0; i < 100; i++)
+            {
+                var id = new string(Enumerable.Repeat(chars, this.intLobbyIdLength).Select(s => s[random.Next(s.Length)]).ToArray());
+                if (!this.oGames.ContainsKey(id)) { return id; }
+            }
+            return null;
         }
 
         ~MasterServer()
