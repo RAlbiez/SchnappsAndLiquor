@@ -16,10 +16,10 @@ export class SplashScreenComponent implements OnInit {
   changeName = false;
 
   ngOnInit(): void {
-    // if (!environment.production) {
-    //   this.createLobby();
-    //   return;
-    // }
+    if (!environment.production) {
+      this.createLobby();
+      return;
+    }
     var lobbyId = this.connection.getIdFromUrl();
     if (lobbyId) {
       this.connection.gameCode = lobbyId;

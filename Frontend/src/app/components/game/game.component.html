@@ -1,4 +1,25 @@
 <div class="row">
+  <!-- win screen -->
+  <div class="pop-over" *ngIf="getMessageType() === 'WinGame'">
+    <div class="card win-screen">
+      <div class="card-content">
+        <h1>Aus, aus, aus! Aus! Das Spiel ist aus!</h1>
+        <h1> <b> {{ connection.gameState.oCurrentMessage.sPlayerName }} </b> ist Saufmeister! </h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- second win screen -->
+  <div class="pop-over" *ngIf="getMessageType() === 'StackOverflowExceptionAchieved'">
+    <div class="card win-screen">
+      <div class="card-content">
+        <h1>Rafi hat reingeschissen und sein Programm ist geplatzt!</h1>
+        <h1>Er trinkt fünf!</h1>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- Side column -->
   <div class="col s2">
@@ -23,21 +44,23 @@
     </div>
 
     <!-- Field description card -->
-    <div class="card-panel grey lighten-2" *ngIf="getCurrentCoice()">
-      <span>{{ getCurrentFieldText() }}
-      </span>
-      <hr>
-      <div class="">
-        <button class="btn btn-block waves-effect waves-light teal" [disabled]="!getCurrentCoice().bCanSkip"
-          (click)="skip()">
-          Skip ({{ getCurrentCoice().shtSkipCost }})
-        </button>
+    <div class="card-panel grey lighten-2">
+      <span> {{ getCurrentFieldText() }} </span>
+      <ng-container *ngIf="getCurrentCoice()">
+        <hr>
         <button *ngFor="let i of getCurrentCoice().oChoices" class="btn btn-block waves-effect waves-light teal"
           [disabled]="!isPlayerTurn()" (click)="executeAction(i)">
           {{ i }}
         </button>
-      </div>
+      </ng-container>
+      <ng-container *ngIf="isSkipMessage()">
+        <button class="btn btn-block waves-effect waves-light teal" [disabled]="!isPlayerTurn()" (click)="executeAction()">
+          Weiter
+        </button>
+      </ng-container>
     </div>
+
+    <div></div>
 
     <!-- List of players -->
     <div class="collection">
@@ -48,13 +71,22 @@
           {{ player.sName }}
           <ng-container *ngIf="player.sName === connection.playerName">🍆</ng-container>
           <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">👑</ng-container>
-          <a class="secondary-content">🍺: {{ player.lngPoints }}</a>
+
+          <a class="secondary-content">
+            <div class="inline"
+                *ngIf="isLobbyLeader() && player.sName !== connection.gameState.sLobbyLeader"
+                (click)="kickPlayer(player.sName)"
+                title="Ja, dieser Spieler hier Herr Wachtmeister!">
+              🗑️
+            </div>
+            <div class="inline">🍺: {{ player.lngPoints }}</div>
+          </a>
         </div>
       </a>
     </div>
 
     <!-- Temporarily sisplay snakes & ladders -->
-    <div *ngFor="let snek of getSnakes()" [snek]="snek" class="center">
+    <div *ngFor="let snek of getSnakes()"class="center">
       <a *ngIf="snek.bSnake; else ladder">🐍</a>
       <ng-template #ladder><a>🧬</a></ng-template>
       {{ snek.shtStartPoint+1 }} --> {{

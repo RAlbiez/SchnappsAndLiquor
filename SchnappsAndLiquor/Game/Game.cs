@@ -208,7 +208,7 @@ namespace SchnappsAndLiquor.Game
                     oCurrentMessage.oCallback(this, action.GetFirst("answer"));
                     break;
                 case "NoFieldAction":
-                    oCurrentMessage.oCallback(null, "");
+                    oCurrentMessage.oCallback(this, "");
                     break;
                 case "StackOverflowExceptionAchieved":
                 case "MissedEnd":

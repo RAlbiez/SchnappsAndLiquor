@@ -12,6 +12,10 @@
   font-size: 13px;
 }
 
+.inline {
+  display: inline-block;
+}
+
 td {
     border-right: solid 1px #e0e0e0;
     border-left: solid 1px #e0e0e0;
@@ -29,4 +33,19 @@ td {
 .btn-block {
   width: 100%;
   margin-bottom: 5px;
+}
+
+.pop-over {
+  position: fixed;
+  z-index: 100;
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.win-screen {
+  text-align: center;
+  transform: translateY(90%);
 }

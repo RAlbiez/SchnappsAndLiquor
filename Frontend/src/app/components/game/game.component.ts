@@ -70,21 +70,36 @@ export class GameComponent implements OnInit {
     return this.connection.gameState.oSnakesAndLadders;
   }
 
-  public skip() {
-    var param = new ClientAction(Actions.ClientSkipField);
-    param.add("answer", "Ja");
-    this.connection.sendAction(param);
-  }
-
   public afterRoll(diceNumber) {
     var param = new ClientAction(Actions.ClientMoveFields);
     param.add("answer", diceNumber + "");
     this.connection.sendAction(param);
   }
 
-  public executeAction(name: string) {
+  public executeAction(name: string = null) {
     var param = new ClientAction(Actions.ClientFieldAction);
-    param.add("answer", name);
+    if (name) {
+      param.add("answer", name);
+    }
+    this.connection.sendAction(param);
+  }
+
+  public getMessageType() {
+    return this.connection.gameState.oCurrentMessage.sMessageType;
+  }
+
+  public isSkipMessage() {
+    const type = this.getMessageType();
+    return type === "NoFieldAction" || type === "NoSkipField" || type === "NoSnakeOrLadder" || type === "SnakeOrLadder" || type === "MissedEnd";
+  }
+
+  public isLobbyLeader() {
+    return this.connection.gameState.sLobbyLeader === this.connection.playerName;
+  }
+
+  public kickPlayer(name: string) {
+    var param = new ClientAction(Actions.ClientKick);
+    param.add("name", name);
     this.connection.sendAction(param);
   }
 

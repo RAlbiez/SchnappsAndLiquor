@@ -3,7 +3,6 @@ export enum Actions {
     ClientJoinGame = "ClientJoinGame",
     ClientKick = "ClientKick",
     ClientMoveFields = "MoveFields",
-    ClientSkipField = "SkipField",
     ClientFieldAction = "FieldAction"
 }
 
