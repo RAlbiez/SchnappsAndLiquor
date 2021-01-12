@@ -37,7 +37,11 @@ export class GameComponent implements OnInit {
     let w = this.connection.gameState.intWidth;
     let h = this.connection.gameState.intHeight;
     for (var y = 0; y < h; y++) {
-      rows.push(this.connection.gameState.oBoard.oFields.slice(y * w, (y + 1) * w));
+      let row = this.connection.gameState.oBoard.oFields.slice(y * w, (y + 1) * w);
+      if (y % 2 === 1) {
+        row.reverse();
+      }
+      rows.push(row);
     }
     return rows;
   }
