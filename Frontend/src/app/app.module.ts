@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { GameComponent } from './components/game/game.component';
 import { SplashScreenComponent } from './components/splash-screen/splash-screen.component';
 import { DiceComponent } from './components/dice/dice.component';
-import { SnakeOrLadderComponent } from './components/snake-or-ladder/snake-or-ladder.component';
+import { FieldComponent } from './components/game/field/field.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +14,7 @@ import { SnakeOrLadderComponent } from './components/snake-or-ladder/snake-or-la
     GameComponent,
     SplashScreenComponent,
     DiceComponent,
-    SnakeOrLadderComponent
+    FieldComponent
   ],
   imports: [
     BrowserModule,

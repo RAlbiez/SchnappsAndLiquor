@@ -32,20 +32,6 @@ export class GameComponent implements OnInit {
     return players;
   }
 
-  public getRows() {
-    let rows = [];
-    let w = this.connection.gameState.intWidth;
-    let h = this.connection.gameState.intHeight;
-    for (var y = 0; y < h; y++) {
-      let row = this.connection.gameState.oBoard.oFields.slice(y * w, (y + 1) * w);
-      if (y % 2 === 1) {
-        row.reverse();
-      }
-      rows.push(row);
-    }
-    return rows;
-  }
-
   public isPlayerTurn() {
     return this.connection.playerName === this.getCurrentPlayer();
   }
