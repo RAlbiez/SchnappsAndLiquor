@@ -9,6 +9,12 @@
             <div [style.background]="player.sColor" class="color-dot"></div>
           </div>
         </ng-container>
+        <ng-container *ngFor="let snek of getSnakes()">
+          <ng-container *ngIf="snek.shtStartPoint === field.shtBoardPos">
+            <div *ngIf="snek.bSnake">🐍</div>
+            <div *ngIf="!snek.bSnake">🧬</div>
+          </ng-container>
+        </ng-container>
         <div [id]="'field' + field.shtBoardPos"></div>
       </td>
     </tr>

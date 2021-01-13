@@ -56,10 +56,6 @@ export class GameComponent implements OnInit {
     return this.connection.gameState.oBoard.oFields[position].sText;
   }
 
-  public getSnakes() {
-    return this.connection.gameState.oSnakesAndLadders;
-  }
-
   public afterRoll(diceNumber) {
     var param = new ClientAction(Actions.ClientMoveFields);
     param.add("answer", diceNumber + "");

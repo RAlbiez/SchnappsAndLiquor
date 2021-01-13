@@ -84,14 +84,6 @@
         </div>
       </a>
     </div>
-
-    <!-- Temporarily sisplay snakes & ladders -->
-    <div *ngFor="let snek of getSnakes()"class="center">
-      <a *ngIf="snek.bSnake; else ladder">🐍</a>
-      <ng-template #ladder><a>🧬</a></ng-template>
-      {{ snek.shtStartPoint+1 }} --> {{
-      snek.shtEndPoint+1 }}
-    </div>
   </div>
 
   <!-- Playfield -->

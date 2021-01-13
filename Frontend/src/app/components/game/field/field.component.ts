@@ -58,6 +58,10 @@ export class FieldComponent implements OnInit, AfterViewInit {
     return players;
   }
 
+  public getSnakes() {
+    return this.connection.gameState.oSnakesAndLadders;
+  }
+
   private drawArrow(ctx: CanvasRenderingContext2D, x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
     var headlen = 10; //
     var dx = x2 - x1;
@@ -65,6 +69,7 @@ export class FieldComponent implements OnInit, AfterViewInit {
     var angle = Math.atan2(dy, dx);
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
+    ctx.setLineDash([10, 10]);
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.moveTo(x2, y2);
