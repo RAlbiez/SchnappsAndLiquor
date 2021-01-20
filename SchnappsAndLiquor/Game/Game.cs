@@ -10,6 +10,7 @@ namespace SchnappsAndLiquor.Game
     public class Game
     {
         private int intRecursionCounter = 0;
+        public int intTurnNumber = 0;
         public Board oBoard = new Board();
         public Dictionary<string, Player> oPlayers = new Dictionary<string, Player>();
         public PlayerOrder oPlayerOrder = new PlayerOrder();
@@ -20,6 +21,7 @@ namespace SchnappsAndLiquor.Game
         public int intWidth = GameParams.WIDTH;
         public int intHeight = GameParams.HEIGHT;
         public Message oCurrentMessage;
+        public List<(string sTurnPlayer, string sConnectedPlayer, int intTurnCounter)> oPlayerConnections = new List<(string sTurnPlayer, string sConnectedPlayer, int intTurnCounter)>();
         private Queue<Message> oMessageQueue = new Queue<Message>();
         private List<string> oColors = new List<string>();
 
@@ -140,7 +142,20 @@ namespace SchnappsAndLiquor.Game
 
         public void AddPointsToPlayer(string sPlayerName, short shtPointsToAdd)
         {
-            this.oPlayers[sPlayerName].AddPoints(shtPointsToAdd);
+            foreach (var oPlayerConnection in oPlayerConnections.Where(x => x.sTurnPlayer == sPlayerName))
+            {
+                if(oPlayerConnection.sConnectedPlayer == "☭☭☭")
+                {
+                    foreach (var oPlayer in oPlayers)
+                        oPlayer.Value.AddPoints(1);
+                    return;
+                }
+                oPlayers[oPlayerConnection.sConnectedPlayer].AddPoints(shtPointsToAdd);
+            }
+
+            oPlayers[sPlayerName].AddPoints(shtPointsToAdd);
+            
+            
         }
 
         protected void InitBoard()
@@ -176,6 +191,11 @@ namespace SchnappsAndLiquor.Game
             this.oPlayers.Remove(sNameP);
         }
 
+        private void RemoveConnectedPlayers()
+        {
+            oPlayerConnections.RemoveAll(x => x.intTurnCounter == intTurnNumber);
+        }
+
         /// <summary>
         /// Handle client actions
         /// </summary>
@@ -196,6 +216,10 @@ namespace SchnappsAndLiquor.Game
                     if (short.TryParse(action.GetFirst("answer"), out short shtNumberRolled))
                     {
                         intRecursionCounter = 0;
+                        intTurnNumber++;
+
+                        RemoveConnectedPlayers();
+
                         this.MovePlayerBy(oCurrentMessage.sPlayerName, shtNumberRolled);
                     }
                     break;

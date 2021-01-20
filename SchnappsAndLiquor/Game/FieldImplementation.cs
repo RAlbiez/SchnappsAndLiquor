@@ -12,17 +12,29 @@ namespace SchnappsAndLiquor.Game
             typeof(MoveBackByField),
             typeof(MoveBackByField),
             typeof(MoveBackByField),
+            typeof(MoveBackByField),
             typeof(DrinkField),
             typeof(DrinkField),
             typeof(DrinkField),
             typeof(DrinkField),
+            typeof(DrinkField),
+            typeof(DrinkField),
+            typeof(DrinkField),
+            typeof(DrinkAndMoveField),
             typeof(DrinkAndMoveField),
             typeof(DrinkAndMoveField),
             typeof(SwapPositionField),
             typeof(DoubleUpField),
             typeof(DoubleUpField),
             typeof(DrinkOrDoStuffField),
-            typeof(DrinkOrDoStuffField)
+            typeof(DrinkOrDoStuffField),
+            typeof(DrinkOrDoStuffField),
+            typeof(DrinkOrDoStuffField),
+            typeof(PVPField),
+            typeof(PVPField),
+            typeof(ConnectPlayersField),
+            typeof(CommunismField),
+            typeof(RockPaperScissorsField)
         };
 
         public static IField GetRandomField()
@@ -86,7 +98,9 @@ namespace SchnappsAndLiquor.Game
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Hättest eigentlich nach vorne laufen dürfen, warst aber zu dumm. Gehe {0} zurück.", -2 , 0),
-            ("Kein Rosinenbrötchen mit Leberwurst, keine 3 Bier, Faktor nicht wieder drinne. Gehe {0} zurück.", -3, -1)
+            ("Kein Rosinenbrötchen mit Leberwurst, keine 3 Bier, Faktor nicht wieder drinne. Gehe {0} zurück.", -3, -1),
+            ("Gehe {0} zurück und beschwere dich lautstark über die Fairness dieses Spiels.", -2, 0),
+            ("Du bist mal wieder auf der Toilette eingeschlafen. Gehe zur Strafe {0} zurück.", -2, 0),
         };
 
         public string sText { get; set; }
@@ -125,7 +139,11 @@ namespace SchnappsAndLiquor.Game
             ("Trink {0} und behalte sie im Mund, bis du wieder an der Reihe bist.", 1,3),
             ("Schick dein letztes Bild an eine beliebige WhatsApp-Gruppe und trink {0}.", 1,3),
             ("Trink {0} und geh eine Runde auf die stille Treppe.", 1, 3),
-            ("Alle hören ein Lied deiner Wahl, trink dafür {0}", 2, 4)
+            ("Alle hören ein Lied deiner Wahl, trink dafür {0}", 2, 4),
+            ("Here come dat boi... oh shit, drink up! Trinke {0}", 1, 3),
+            ("SAFE ZONE! Glück/Pech gehabt, du darfst nichts trinken!", 0, 1),
+            ("Gestern schon wieder wie so'n Achtarmiger ein reingeorgelt mit Gerhard. Trinke {0}", 2, 5),
+            ("Bar-Irrtum zu deinen Gunsten, Trinke {0}", 1,3)
         };
 
         public string sText { get; set; }
@@ -160,7 +178,8 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Komme aus dem Gefängnis frei. Warte, falsches Spiel ... Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4)
+            ("Komme aus dem Gefängnis frei. Warte, falsches Spiel ... Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4),
+            ("Trinke {0} Schlücke und gehe {1} vor. Halte aber die Klappe bis du wieder dran bist.", 1, 4)
         };
 
         public string sText { get; set; }
@@ -199,7 +218,142 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Tausche die Position mit einem beliebigen Spieler, ihr trinkt beide {0}.",1,4)
+            ("Tausche die Position mit einem beliebigen Spieler, ihr trinkt beide {0}.",1,4),
+            ("Wegegangen, Platz gefangen... oder so. Tausche mit jemandem, beide trinken {0}.",1,4)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        private short shtNumberToDrink;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+
+            return (new Choice(oGame.oPlayers.Keys.Except(new List<string>() { sPlayerName }), sPlayerName, true), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            var oFirstPlayer = oGame.GetCurentPlayer();
+            var oSecondPlayer = oGame.oPlayers[sAnswer];
+
+            oFirstPlayer.AddPoints(shtNumberToDrink);
+            oSecondPlayer.AddPoints(shtNumberToDrink);
+
+            var t = oFirstPlayer.shtBoardPosition;
+
+            oFirstPlayer.shtBoardPosition = oSecondPlayer.shtBoardPosition;
+            oSecondPlayer.shtBoardPosition = t;
+        }
+    }
+
+    public class DoubleUpField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Du trinkst {0}, wähle einen anderen Spieler, er trinkt das Doppelte.", 1,3),
+            ("Mache einem Spieler ein Kompliment. Du trinkst {0}, er trinkt das Doppelte.", 1,3)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        private short shtNumberToDrink;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 3);
+
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+            return (new Choice(oGame.oPlayers.Keys.Except(new List<string>() { sPlayerName }), sPlayerName), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            var oFirstPlayer = oGame.GetCurentPlayer();
+            var oSecondPlayer = oGame.oPlayers[sAnswer];
+
+            oFirstPlayer.AddPoints(shtNumberToDrink);
+            oSecondPlayer.AddPoints(shtNumberToDrink * 2);
+        }
+    }
+
+    public class DrinkOrDoStuffField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Rotz auf deinen Tisch oder trinke {0}.", 3,5),
+            ("Ruf deine Mutti an und sag, dass du sie lieb hast oder trinke {0}.", 2,5),
+            ("Erzähl einen Witz, wenn keiner lacht trink {0}, vielleicht wirst ja dann lustiger...", 3,5),
+            ("Lies deine zuletzt erhaltene (nicht Gruppenchat-)Nachricht vor oder trinke {0}.", 2,4),
+            ("Schicke ein Random Selfie an deinen 4. WhatsApp oder trinke {0}.", 2,5)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        private short shtNumberToDrink;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+            return (new Choice(new List<string>() { "Challenge erledigt", "Trink" }, sPlayerName), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            if (sAnswer == "Challenge erledigt")
+            {
+                return;
+            }
+            else if (sAnswer == "Trink")
+            {
+                var oFirstPlayer = oGame.GetCurentPlayer();
+
+                oFirstPlayer.AddPoints(shtNumberToDrink);
+            }
+        }
+    }
+
+    public class PVPField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Denk dir eine Kategorie aus, alle nennen der Reihe nach einen Begriff aus dieser Kategorie, wer nix mehr weiß trinkt {0}.",3,6),
+            ("Jeder malt ein Kunstwerk zu einem beliebig gewählten Thema, der Schöpfer des abstraktestem (hässlichsten) trinkt {0}", 3,6)
         };
 
         public string sText { get; set; }
@@ -226,24 +380,17 @@ namespace SchnappsAndLiquor.Game
 
         public void ReturnAction(Game oGame, string sAnswer)
         {
-            var oFirstPlayer = oGame.GetCurentPlayer();
-            var oSecondPlayer = oGame.oPlayers[sAnswer];
+            var oLooser = oGame.oPlayers[sAnswer];
 
-            oFirstPlayer.AddPoints(shtNumberToDrink);
-            oSecondPlayer.AddPoints(shtNumberToDrink);
-
-            var t = oFirstPlayer.shtBoardPosition;
-
-            oFirstPlayer.shtBoardPosition = oSecondPlayer.shtBoardPosition;
-            oSecondPlayer.shtBoardPosition = t;
+            oLooser.AddPoints(shtNumberToDrink);
         }
     }
 
-    public class DoubleUpField : IField
+    public class ConnectPlayersField : IField
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Du trinkst {0}, wähle einen anderen Spieler, er trinkt das Doppelte.", 1,3)
+            ("Wähle einen anderen Spieler, bis zu deinem nächsten Zug trinkt er immer mit dir.",0,0)
         };
 
         public string sText { get; set; }
@@ -251,41 +398,31 @@ namespace SchnappsAndLiquor.Game
         public bool bIsStartPoint { get; set; }
         public bool bIsEndPoint { get; set; }
 
-        private short shtNumberToDrink;
-
         public void Init(Game oGame, short shtPos)
         {
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 3);
-
-            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
-
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
-
-            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            sText = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)].sTextToUse;
             shtBoardPos = shtPos;
         }
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            return (new Choice(oGame.oPlayers.Keys, sPlayerName), ReturnAction);
+
+            return (new Choice(oGame.oPlayers.Keys.Except(new List<string>() { sPlayerName }), sPlayerName, true), ReturnAction);
         }
 
         public void ReturnAction(Game oGame, string sAnswer)
         {
-            var oFirstPlayer = oGame.GetCurentPlayer();
-            var oSecondPlayer = oGame.oPlayers[sAnswer];
+            var oTurnPlayer = oGame.GetCurentPlayer();
 
-            oFirstPlayer.AddPoints(shtNumberToDrink);
-            oSecondPlayer.AddPoints(shtNumberToDrink * 2);
+            oGame.oPlayerConnections.Add((oGame.GetCurentPlayer().sName, sAnswer, oGame.intTurnNumber + oGame.oPlayers.Count));
         }
     }
 
-    public class DrinkOrDoStuffField : IField
+    public class CommunismField : IField
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Rotz auf deinen Tisch oder trinke {0}.", 3,5),
-            ("Ruf deine Mutti an und sag, dass du sie lieb hast oder trinke {0}.", 2,5)
+            ("☭KOMMUNISMUS ☭, bis du wieder dran bist trinken alle 1 wenn du trinken müsstest.",0,0)
         };
 
         public string sText { get; set; }
@@ -293,34 +430,62 @@ namespace SchnappsAndLiquor.Game
         public bool bIsStartPoint { get; set; }
         public bool bIsEndPoint { get; set; }
 
-        private short shtNumberToDrink;
-
         public void Init(Game oGame, short shtPos)
         {
-            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
-
-            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+            sText = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)].sTextToUse;
             shtBoardPos = shtPos;
         }
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
-            return (new Choice(new List<string>() { "Ja", "Nein" }, sPlayerName), ReturnAction);
+
+            return (new Choice(oGame.oPlayers.Keys.Except(new List<string>() { sPlayerName }), sPlayerName, true), ReturnAction);
         }
 
         public void ReturnAction(Game oGame, string sAnswer)
         {
-            if (sAnswer == "Ja")
-            {
-                return;
-            }
-            else if (sAnswer == "Nein")
-            {
-                var oFirstPlayer = oGame.GetCurentPlayer();
+            var oTurnPlayer = oGame.GetCurentPlayer();
 
-                oFirstPlayer.AddPoints(shtNumberToDrink);
-            }
+            oGame.oPlayerConnections.Add((oGame.GetCurentPlayer().sName, "☭☭☭", oGame.intTurnNumber + oGame.oPlayers.Count));
+        }
+    }
+
+    public class RockPaperScissorsField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Schere, Stein, Papier, wenn du gewinnst gehe 2 vor, wenn du verlierst 2 zurück, bei unentschieden bleibst du stehen.",0,0)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        public void Init(Game oGame, short shtPos)
+        {
+            sText = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)].sTextToUse;
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+
+            return (new Choice(new List<string>() { "Schere", "Stein", "Papier" }, sPlayerName), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            var oTurnPlayer = oGame.GetCurentPlayer();
+
+            string sComputerAnswered = new List<string>() { "Schere", "Stein", "Papier" }[GameParams.oRandomInstance.Next(3)];
+
+            if ((sAnswer == "Schere" && sComputerAnswered == "Papier")
+               || (sAnswer == "Stein" && sComputerAnswered == "Schere")
+               || (sAnswer == "Papier" && sComputerAnswered == "Stein"))
+                oTurnPlayer.MoveBy(2);
+            else if (sAnswer != sComputerAnswered)
+                oTurnPlayer.MoveBy(-2);
         }
     }
 }
