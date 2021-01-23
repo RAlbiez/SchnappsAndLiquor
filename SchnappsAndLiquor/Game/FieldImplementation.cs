@@ -63,8 +63,12 @@ namespace SchnappsAndLiquor.Game
             shtBoardPos = 0;
         }
 
-        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame) => (null, null);
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame) => (null, ReturnAction);
 
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            //just for safety
+        }
     }
 
     public class FinishField : IField
@@ -143,7 +147,10 @@ namespace SchnappsAndLiquor.Game
             ("Here come dat boi... oh shit, drink up! Trinke {0}", 1, 3),
             ("SAFE ZONE! Glück/Pech gehabt, du darfst nichts trinken!", 0, 1),
             ("Gestern schon wieder wie so'n Achtarmiger ein reingeorgelt mit Gerhard. Trinke {0}", 2, 5),
-            ("Bar-Irrtum zu deinen Gunsten, Trinke {0}", 1,3)
+            ("Bar-Irrtum zu deinen Gunsten, Trinke {0}", 1,3),
+            ("Rede eine Runde mit russischem Akzent und Trinke {0]", 1,3),
+            ("Rede eine Runde mit französischem Akzent und Trinke {0]", 1,3),
+            ("'Du hast Corona', trink {0} Schlücke Bleichmittel/Bier um dich zu heilen.", 1,3)
         };
 
         public string sText { get; set; }
@@ -179,7 +186,8 @@ namespace SchnappsAndLiquor.Game
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Komme aus dem Gefängnis frei. Warte, falsches Spiel ... Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4),
-            ("Trinke {0} Schlücke und gehe {1} vor. Halte aber die Klappe bis du wieder dran bist.", 1, 4)
+            ("Trinke {0} Schlücke und gehe {1} vor. Halte aber die Klappe bis du wieder dran bist.", 1, 4),
+            ("Sage eine Bauernweisheit auf, trinke {0] und gehe {1} vor.", 1,3)
         };
 
         public string sText { get; set; }
@@ -309,7 +317,8 @@ namespace SchnappsAndLiquor.Game
             ("Ruf deine Mutti an und sag, dass du sie lieb hast oder trinke {0}.", 2,5),
             ("Erzähl einen Witz, wenn keiner lacht trink {0}, vielleicht wirst ja dann lustiger...", 3,5),
             ("Lies deine zuletzt erhaltene (nicht Gruppenchat-)Nachricht vor oder trinke {0}.", 2,4),
-            ("Schicke ein Random Selfie an deinen 4. WhatsApp oder trinke {0}.", 2,5)
+            ("Schicke ein Random Selfie an deinen 4. WhatsApp oder trinke {0}.", 2,5),
+            ("Schick ein Bild in eure Gruppe, wenn es keiner witzig findet trinke {0}.",2,5)
         };
 
         public string sText { get; set; }
