@@ -34,7 +34,8 @@ namespace SchnappsAndLiquor.Game
             typeof(PVPField),
             typeof(ConnectPlayersField),
             typeof(CommunismField),
-            typeof(RockPaperScissorsField)
+            typeof(RockPaperScissorsField),
+            typeof(RerollBoardField)
         };
 
         public static IField GetRandomField()
@@ -65,10 +66,7 @@ namespace SchnappsAndLiquor.Game
 
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame) => (null, ReturnAction);
 
-        public void ReturnAction(Game oGame, string sAnswer)
-        {
-            //just for safety
-        }
+        public void ReturnAction(Game oGame, string sAnswer) { }
     }
 
     public class FinishField : IField
@@ -148,8 +146,8 @@ namespace SchnappsAndLiquor.Game
             ("SAFE ZONE! Glück/Pech gehabt, du darfst nichts trinken!", 0, 1),
             ("Gestern schon wieder wie so'n Achtarmiger ein reingeorgelt mit Gerhard. Trinke {0}", 2, 5),
             ("Bar-Irrtum zu deinen Gunsten, Trinke {0}", 1,3),
-            ("Rede eine Runde mit russischem Akzent und Trinke {0]", 1,3),
-            ("Rede eine Runde mit französischem Akzent und Trinke {0]", 1,3),
+            ("Rede eine Runde mit russischem Akzent und Trinke {0}", 1,3),
+            ("Rede eine Runde mit französischem Akzent und Trinke {0}", 1,3),
             ("'Du hast Corona', trink {0} Schlücke Bleichmittel/Bier um dich zu heilen.", 1,3)
         };
 
@@ -187,7 +185,7 @@ namespace SchnappsAndLiquor.Game
         {
             ("Komme aus dem Gefängnis frei. Warte, falsches Spiel ... Egal. Trink {0} Schluck und gehe {1} vor.", 2, 4),
             ("Trinke {0} Schlücke und gehe {1} vor. Halte aber die Klappe bis du wieder dran bist.", 1, 4),
-            ("Sage eine Bauernweisheit auf, trinke {0] und gehe {1} vor.", 1,3)
+            ("Sage eine Bauernweisheit auf, trinke {0} und gehe {1} vor.", 1,3)
         };
 
         public string sText { get; set; }
@@ -362,7 +360,8 @@ namespace SchnappsAndLiquor.Game
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
             ("Denk dir eine Kategorie aus, alle nennen der Reihe nach einen Begriff aus dieser Kategorie, wer nix mehr weiß trinkt {0}.",3,6),
-            ("Jeder malt ein Kunstwerk zu einem beliebig gewählten Thema, der Schöpfer des abstraktestem (hässlichsten) trinkt {0}", 3,6)
+            ("Jeder malt ein Kunstwerk zu einem beliebig gewählten Thema, der Schöpfer des abstraktestem (hässlichsten) trinkt {0}", 3,6),
+            ("Wir spielen 'Ich packe meinen Koffer'. Der Verlierer trinkt {0}.",3,6)
         };
 
         public string sText { get; set; }
@@ -399,7 +398,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Wähle einen anderen Spieler, bis zu deinem nächsten Zug trinkt er immer mit dir.",0,0)
+            ("Wähle einen anderen Spieler, bis zu deinem nächsten Zug trinkt er immer mit dir.",0,1)
         };
 
         public string sText { get; set; }
@@ -431,7 +430,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("☭KOMMUNISMUS ☭, bis du wieder dran bist trinken alle 1 wenn du trinken müsstest.",0,0)
+            ("☭KOMMUNISMUS ☭, bis du wieder dran bist trinken alle 1 wenn du trinken müsstest.",0,1)
         };
 
         public string sText { get; set; }
@@ -463,7 +462,7 @@ namespace SchnappsAndLiquor.Game
     {
         private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
         {
-            ("Schere, Stein, Papier, wenn du gewinnst gehe 2 vor, wenn du verlierst 2 zurück, bei unentschieden bleibst du stehen.",0,0)
+            ("Schere, Stein, Papier, wenn du gewinnst gehe 2 vor, wenn du verlierst 2 zurück, bei unentschieden bleibst du stehen.",0,1)
         };
 
         public string sText { get; set; }
@@ -495,6 +494,36 @@ namespace SchnappsAndLiquor.Game
                 oTurnPlayer.MoveBy(2);
             else if (sAnswer != sComputerAnswered)
                 oTurnPlayer.MoveBy(-2);
+        }
+    }
+
+    public class RerollBoardField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Das alte Brett stinkt, roll ein neues!.",0,1)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        public void Init(Game oGame, short shtPos)
+        {
+            sText = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)].sTextToUse;
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+            oGame.InitBoard();
+            return (null, ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            
         }
     }
 }

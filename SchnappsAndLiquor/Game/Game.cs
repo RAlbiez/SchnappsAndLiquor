@@ -158,15 +158,30 @@ namespace SchnappsAndLiquor.Game
             
         }
 
-        protected void InitBoard()
+        public void InitBoard()
         {
             FieldService oFieldService = new FieldService();
 
             this.oBoard[0] = new StartField();
 
+            int intCountOfRerollFields = 0;
+
             for( short i = 1; i < GameParams.MAX_FIELDS - 1; i++)
             {
                 IField oField = oFieldService.Next(this, i);
+
+                if(oField.GetType() == typeof(RerollBoardField))
+                {
+                    if (intCountOfRerollFields > 0)
+                    {
+                        i--;
+                        continue;
+                    }
+                    else
+                    {
+                        intCountOfRerollFields++;
+                    }
+                }    
 
                 this.oBoard[i] = oField;
             }
