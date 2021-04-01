@@ -447,7 +447,7 @@ namespace SchnappsAndLiquor.Game
         public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
         {
 
-            return (new Choice(oGame.oPlayers.Keys.Except(new List<string>() { sPlayerName }), sPlayerName, true), ReturnAction);
+            return (null, ReturnAction);
         }
 
         public void ReturnAction(Game oGame, string sAnswer)
