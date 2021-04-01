@@ -16,6 +16,9 @@
         <h1>Rafi hat reingeschissen und sein Programm ist geplatzt!</h1>
         <h1>Er trinkt fünf!</h1>
       </div>
+      <button class="btn btn-block waves-effect waves-light teal" [disabled]="!isPlayerTurn()" (click)="executeAction()">
+        Weiter
+      </button>
     </div>
   </div>
 

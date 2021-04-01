@@ -36,6 +36,12 @@ namespace SchnappsAndLiquor.Game
             this.oColors.Add("#FF00FF");
             this.oColors.Add("#FFFF00");
             this.oColors.Add("#FFFFFF");
+            this.oColors.Add("#AAAAAA");
+            this.oColors.Add("#990033");
+            this.oColors.Add("#4DD0E1");
+            this.oColors.Add("#654416");
+            this.oColors.Add("#0055AA");
+            this.oColors.Add("#DD5500");
             oSnakesAndLadders = SnakeAndLadderService.GenerateSnakesAndLadders(this);         
         }
 
@@ -191,7 +197,11 @@ namespace SchnappsAndLiquor.Game
 
         public void AddPlayer(string sNameP)
         {
-            var sColor = this.oColors[GameParams.oRandomInstance.Next(0, this.oColors.Count)];
+            string sColor = String.Format("#{0:X6}", GameParams.oRandomInstance.Next(0x1000000));
+            if (this.oColors.Count != 0)
+            {
+                sColor = this.oColors[GameParams.oRandomInstance.Next(0, this.oColors.Count)];
+            }
             this.oColors.Remove(sColor);
             this.oPlayers.Add(sNameP, new Player(sNameP, sColor));
             this.oPlayerOrder.AddPlayer(sNameP);
