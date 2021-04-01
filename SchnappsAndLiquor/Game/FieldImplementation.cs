@@ -31,7 +31,6 @@ namespace SchnappsAndLiquor.Game
             typeof(DrinkOrDoStuffField),
             typeof(DrinkOrDoStuffField),
             typeof(PVPField),
-            typeof(PVPField),
             typeof(ConnectPlayersField),
             typeof(CommunismField),
             typeof(RockPaperScissorsField),
