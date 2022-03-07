@@ -20,11 +20,11 @@ This creates a directory `Frontend/dist/saufen`, where the static files for the 
 
 ### Backend
 
-Best built by using [.NET SDK 5](https://dotnet.microsoft.com/download):
+Best built by using [.NET SDK 6](https://dotnet.microsoft.com/download):
 
 `dotnet publish SchnappsAndLiquor.sln --output ./build/ --runtime linux-x64`
 
-You can then start the compiled application using the [.NET Runtime 5](https://dotnet.microsoft.com/download):
+You can then start the compiled application using the [.NET Runtime 6](https://dotnet.microsoft.com/download):
 
 `dotnet ./build/SchnappsAndLiquor.dll`
 
