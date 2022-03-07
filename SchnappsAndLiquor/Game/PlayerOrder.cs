@@ -16,6 +16,11 @@ namespace SchnappsAndLiquor.Game
             oNames.Add(sName);
         }
 
+        public void RemovePlayer(string sName)
+        {
+            oNames.Remove(sName);
+        }
+
         public string GetCurrent() => oNames[intIndex];
 
         public string Next()

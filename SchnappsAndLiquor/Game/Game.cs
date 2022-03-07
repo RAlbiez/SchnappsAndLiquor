@@ -214,6 +214,7 @@ namespace SchnappsAndLiquor.Game
         {
             this.oColors.Add(this.oPlayers[sNameP].sColor);
             this.oPlayers.Remove(sNameP);
+            this.oPlayerOrder.RemovePlayer(sNameP);
         }
 
         private void RemoveConnectedPlayers()

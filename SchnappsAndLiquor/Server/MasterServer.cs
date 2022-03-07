@@ -92,6 +92,14 @@ namespace SchnappsAndLiquor.Server
         public void KickPlayer(string id, string name, ClientConnection connetion)
         {
             if (connetion.sName != this.oLobbyLeader[id]) { return; }
+
+            if (!this.oConnections[id].Any(x => x.sName == name))
+            {
+                this.oGames[id].RemovePlayer(name);
+                PushGameState(id);
+                return;
+            }
+
             foreach (var i in this.oConnections[id])
             {
                 if (i.sName == name)
