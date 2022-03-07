@@ -314,7 +314,7 @@ namespace SchnappsAndLiquor.Game
             ("Ruf deine Mutti an und sag, dass du sie lieb hast oder trinke {0}.", 2,5),
             ("Erzähl einen Witz, wenn keiner lacht trink {0}, vielleicht wirst ja dann lustiger...", 3,5),
             ("Lies deine zuletzt erhaltene (nicht Gruppenchat-)Nachricht vor oder trinke {0}.", 2,4),
-            ("Schicke ein Random Selfie an deinen 4. WhatsApp oder trinke {0}.", 2,5),
+            ("Schicke ein Random Selfie an deinen 4. WhatsApp Kontakt oder trinke {0}.", 2,5),
             ("Schick ein Bild in eure Gruppe, wenn es keiner witzig findet trinke {0}.",2,5)
         };
 
