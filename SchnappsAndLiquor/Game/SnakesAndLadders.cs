@@ -12,28 +12,19 @@ namespace SchnappsAndLiquor.Game
         public short shtSkipCost;
         public bool bSnake;
 
-        public SnakeOrLadder(Game oGame, bool bSnakeP)
+        public void Generate(Game oGame)
         {
-            bSnake = bSnakeP;
             int intLinesToSkip = GameParams.oRandomInstance.Next(1, 3);
             bool bGeneratedSuccessfully = false;
 
             while (!bGeneratedSuccessfully)
             {
                 int intPos1 = GameParams.oRandomInstance.Next(1, GameParams.MAX_FIELDS - 2);
-                int intPos2 = bSnakeP ?
-                                  intPos1 - intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1)
-                                : intPos1 + intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1);
+                int intPos2 = GetPos2(intPos1, intLinesToSkip);
 
-                if (bSnakeP)
+                if (CheckPos2(intPos2))
                 {
-                    if (intPos2 < 1)
-                        continue;
-                }
-                else
-                {
-                    if (intPos2 > GameParams.MAX_FIELDS - 2)
-                        continue;
+                    continue;
                 }
 
                 if (oGame.oBoard[(short)intPos1].bIsStartPoint || oGame.oBoard[(short)intPos1].bIsEndPoint || oGame.oBoard[(short)intPos2].bIsStartPoint || oGame.oBoard[(short)intPos2].bIsEndPoint)
@@ -50,6 +41,38 @@ namespace SchnappsAndLiquor.Game
                 shtEndPoint = (short)intPos2;
             }
         }
+
+        public virtual int GetPos2(int intPos1, int intLinesToSkip) => 0;
+
+        public virtual bool CheckPos2(int intPos2) => false;
+    }
+
+    public class Snake : SnakeOrLadder
+    {
+        public Snake(Game oGame)
+        {
+            this.Generate(oGame);
+
+            bSnake = true;
+        }
+
+        public override int GetPos2(int intPos1, int intLinesToSkip) => intPos1 - intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1);
+
+        public override bool CheckPos2(int intPos2) => intPos2 < 1; 
+    }
+
+    public class Ladder : SnakeOrLadder
+    {
+        public Ladder(Game oGame)
+        {
+            this.Generate(oGame);
+
+            bSnake = false;
+        }
+
+        public override int GetPos2(int intPos1, int intLinesToSkip) => intPos1 + intLinesToSkip * GameParams.WIDTH + GameParams.oRandomInstance.Next(-1 * intLinesToSkip - 1, intLinesToSkip + 1);
+
+        public override bool CheckPos2(int intPos2) => intPos2 > GameParams.MAX_FIELDS - 2;
     }
 
     public static class SnakeAndLadderService
@@ -62,8 +85,8 @@ namespace SchnappsAndLiquor.Game
 
             for(int i = 0; i<shtCount; i++)
             {
-                oList.Add(new SnakeOrLadder(oGame, true));
-                oList.Add(new SnakeOrLadder(oGame, false));
+                oList.Add(new Snake(oGame));
+                oList.Add(new Ladder(oGame));
             }
 
             return oList;
