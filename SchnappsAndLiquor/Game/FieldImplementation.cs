@@ -34,7 +34,8 @@ namespace SchnappsAndLiquor.Game
             typeof(ConnectPlayersField),
             typeof(CommunismField),
             typeof(RockPaperScissorsField),
-            typeof(RerollBoardField)
+            typeof(RerollBoardField),
+            typeof(HeadsOrTailsField)
         };
 
         public static IField GetRandomField()
@@ -523,6 +524,45 @@ namespace SchnappsAndLiquor.Game
         public void ReturnAction(Game oGame, string sAnswer)
         {
             
+        }
+    }
+
+    public class HeadsOrTailsField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Wirf eine Münze bei Kopf trinkst du drei, bei Zahl der Rest einen.",0,1)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        public void Init(Game oGame, short shtPos)
+        {
+            sText = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)].sTextToUse;
+            shtBoardPos = shtPos;
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+            return (new Choice(new List<string>() { "Kopf", "Zahl" }, sPlayerName), ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            if(sAnswer == "Kopf")
+            {
+                oGame.AddPointsToPlayer(oGame.GetCurentPlayer().sName, 3);
+            }
+            else
+            {
+                foreach(var sPlayer in oGame.oPlayers.Keys.Where(x => x != oGame.GetCurentPlayer().sName))
+                {
+                    oGame.AddPointsToPlayer(sPlayer, 3);
+                }
+            }
         }
     }
 }
