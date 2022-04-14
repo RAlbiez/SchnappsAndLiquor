@@ -83,7 +83,7 @@ namespace SchnappsAndLiquor.Game
 
         public void Init(Game oGame, short shtPos)
         {
-            sText = "Ziel";
+            sText = "Ziel! Alle Verlieren trinken leer!";
             shtBoardPos = (short)(GameParams.MAX_FIELDS - 1);
         }
 
