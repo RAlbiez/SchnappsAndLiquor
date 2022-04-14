@@ -3,6 +3,16 @@ import { environment } from 'src/environments/environment';
 import { ClientAction } from '../classes/ClientAction';
 import { GameState } from '../classes/GameState';
 
+const ExampleNames = [
+  "Gerhard",
+  "Volker",
+  "Kai-Udo",
+  "Wakandalfsprudo",
+  "Peter Zwegert",
+  "Gernhardt Reinholzen",
+  "Marcel Davis"
+];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,9 +23,8 @@ export class ConnectionService {
   public error = false;
 
   public gameState: GameState;
-
   public gameCode = "";
-  public playerName = "unbenannter"
+  public playerName = ExampleNames[Math.floor(Math.random() * ExampleNames.length)];
   public nameError = false;
   public lobbyNotFound = false;
 
@@ -42,6 +51,9 @@ export class ConnectionService {
   public sendAction(data: ClientAction) {
     if (this.gameState) {
       data.add("messageid", this.gameState.oCurrentMessage.sMessageID);
+    }
+    if (!environment.production) {
+      (<any>window).DEBUGLastSend = data;
     }
     this.socket.send(JSON.stringify(data));
   }
