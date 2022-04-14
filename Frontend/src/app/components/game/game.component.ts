@@ -48,6 +48,9 @@ export class GameComponent implements OnInit {
   }
 
   public getCurrentCoice() {
+    if (this.connection.gameState.oCurrentMessage?.oChoice?.oChoices.length === 0) {
+      this.connection.gameState.oCurrentMessage.oChoice.oChoices.push("Skip");
+    }
     return this.connection.gameState.oCurrentMessage.oChoice;
   }
 

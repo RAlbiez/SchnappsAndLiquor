@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ClientAction } from '../classes/ClientAction';
-import { GameState } from '../classes/GameState';
+import { GameState, Player } from '../classes/GameState';
 
 const ExampleNames = [
   "Gerhard",
@@ -94,7 +94,44 @@ export class ConnectionService {
     }
     this.nameError = false;
     this.lobbyNotFound= false;
-    let payload = JSON.parse(e.data);
+    let payload: GameState = JSON.parse(e.data);
+
+    // "player movement interpolation"
+    // this doesn't belong here but we don't have events anywhere else in the app
+
+    let maxMoved = 0;
+    let changedPlayers = [];
+    // carry over old positions to do some animation
+    for (let i in payload.oPlayers) {
+      let playerNew: Player = payload.oPlayers[i];
+      playerNew.shtOldBoardPosition = 0;
+      try {
+        let playerOld: Player = this.gameState.oPlayers[playerNew.sName];
+        playerNew.shtOldBoardPosition = playerOld.shtBoardPosition
+        let moved = Math.abs(playerNew.shtOldBoardPosition - playerNew.shtBoardPosition);
+        if (moved !== 0) {
+          changedPlayers.push(i);
+          maxMoved = Math.max(moved, maxMoved);
+        }
+      } catch (error) {
+      }
+    }
+
+    // now this is not only absolute garbage, it's probably wrong too
+    for (let i = 0; i < maxMoved; i++) {
+      setTimeout(() => {
+        for (let p of changedPlayers) {
+          var player: Player = this.gameState.oPlayers[p];
+          const fac = ((i + 1) / maxMoved);
+          const lerped = player.shtOldBoardPosition + fac *
+            (player.shtBoardPosition - player.shtOldBoardPosition);
+          player.shtOldBoardPosition = Math.floor(lerped);
+
+        }
+      }, 200 * (i + 1)); // the word hack doesn't do this justice
+    }
+
+
     this.gameState = payload;
     if (this.gameState.sGameId) {
       this.setUrlId(this.gameState.sGameId);

@@ -16,7 +16,8 @@ export class Player {
     public sName: string,
     public shtBoardPosition: number,
     public lngPoints: number,
-    public sColor: string
+    public sColor: string,
+    public shtOldBoardPosition: number
   ) { }
 }
 
