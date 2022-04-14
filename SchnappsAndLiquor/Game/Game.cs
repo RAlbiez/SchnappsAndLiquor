@@ -24,6 +24,7 @@ namespace SchnappsAndLiquor.Game
         public List<(string sTurnPlayer, string sConnectedPlayer, int intTurnCounter)> oPlayerConnections = new List<(string sTurnPlayer, string sConnectedPlayer, int intTurnCounter)>();
         private Queue<Message> oMessageQueue = new Queue<Message>();
         private List<string> oColors = new List<string>();
+        public List<(string, int)> oDrinksThisTurn = new List<(string, int)>();
 
         public Game()
         {
@@ -57,6 +58,8 @@ namespace SchnappsAndLiquor.Game
 
         protected void ActivateField(string sPlayerName, short shtFieldNumber)
         {
+            oDrinksThisTurn = new List<(string, int)>();
+
             intRecursionCounter++;
 
             if (intRecursionCounter > 5)
@@ -153,15 +156,19 @@ namespace SchnappsAndLiquor.Game
                 if(oPlayerConnection.sConnectedPlayer == "☭☭☭")
                 {
                     foreach (var oPlayer in oPlayers)
+                    {
                         oPlayer.Value.AddPoints(1);
+                        this.oDrinksThisTurn.Add((oPlayer.Value.sName, 1));
+                    }
                     return;
                 }
                 oPlayers[oPlayerConnection.sConnectedPlayer].AddPoints(shtPointsToAdd);
+                this.oDrinksThisTurn.Add((oPlayers[oPlayerConnection.sConnectedPlayer].sName, shtPointsToAdd));
             }
 
             oPlayers[sPlayerName].AddPoints(shtPointsToAdd);
-            
-            
+            this.oDrinksThisTurn.Add((oPlayers[sPlayerName].sName, shtPointsToAdd));
+
         }
 
         public void InitBoard()
