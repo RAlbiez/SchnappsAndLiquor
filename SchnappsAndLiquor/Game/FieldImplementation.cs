@@ -560,7 +560,7 @@ namespace SchnappsAndLiquor.Game
             {
                 foreach(var sPlayer in oGame.oPlayers.Keys.Where(x => x != oGame.GetCurentPlayer().sName))
                 {
-                    oGame.AddPointsToPlayer(sPlayer, 3);
+                    oGame.AddPointsToPlayer(sPlayer, 1);
                 }
             }
         }
