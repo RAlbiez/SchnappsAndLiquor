@@ -5,8 +5,8 @@
       <td *ngFor="let field of rows" class="center gamefield">
         <b>{{ field.shtBoardPos + 1 }}</b> - {{ field.sText }}
         <ng-container *ngFor="let player of getPlayers()">
-          <div *ngIf="player.shtBoardPosition === field.shtBoardPos">
-            <div [style.background]="player.sColor" class="color-dot"></div>
+          <div *ngIf="player.shtOldBoardPosition === field.shtBoardPos">
+            <div [style.background]="player.sColor" class="color-dot" [class.active]="isPlayerActice(player)"></div>
           </div>
         </ng-container>
         <ng-container *ngFor="let snek of getSnakes()">

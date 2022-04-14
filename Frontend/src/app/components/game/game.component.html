@@ -17,7 +17,7 @@
         <h1>Er trinkt fünf!</h1>
       </div>
       <button class="btn btn-block waves-effect waves-light teal" [disabled]="!isPlayerTurn()" (click)="executeAction()">
-        Weiter
+        Weiter (Was wird nur geschehen??)
       </button>
     </div>
   </div>
@@ -72,7 +72,7 @@
         <div>
           <div [style.background]="player.sColor" class="color-dot"></div>
           {{ player.sName }}
-          <ng-container *ngIf="player.sName === connection.playerName">🍆</ng-container>
+          <ng-container *ngIf="player.sName === connection.playerName">(du)</ng-container>
           <ng-container *ngIf="player.sName === connection.gameState.sLobbyLeader">👑</ng-container>
 
           <a class="secondary-content">

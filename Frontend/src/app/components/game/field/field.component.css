@@ -16,4 +16,10 @@
   vertical-align: middle;
 }
 
-
+.active:after {
+  content: "🧠";
+  font-size: 25px;
+  position: relative;
+  top: -20px;
+  right: 5px;
+}

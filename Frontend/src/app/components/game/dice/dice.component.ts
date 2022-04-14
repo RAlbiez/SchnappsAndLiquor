@@ -10,6 +10,7 @@ export class DiceComponent implements OnInit {
   rolling = false;
 
   @Output() rolled: EventEmitter<number> = new EventEmitter();
+  @Output() startRoll: EventEmitter<number> = new EventEmitter();
 
   constructor(
     private cdr: ChangeDetectorRef
@@ -23,6 +24,7 @@ export class DiceComponent implements OnInit {
 
   public roll() {
     if (this.rolling) { return; }
+    this.startRoll.emit();
     this.rolling = true;
     this.cdr.detach();
     const iterations = 23

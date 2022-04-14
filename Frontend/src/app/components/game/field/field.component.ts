@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Player } from 'src/app/classes/GameState';
 import { ConnectionService } from 'src/app/services/connection.service';
 
 @Component({
@@ -56,6 +57,10 @@ export class FieldComponent implements OnInit, AfterViewInit {
       players.push(this.connection.gameState.oPlayers[i]);
     }
     return players;
+  }
+
+  public isPlayerActice(player: Player) {
+    return this.connection.gameState.oCurrentMessage.sPlayerName == player.sName;
   }
 
   public getSnakes() {
