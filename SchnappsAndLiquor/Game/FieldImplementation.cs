@@ -35,7 +35,8 @@ namespace SchnappsAndLiquor.Game
             typeof(CommunismField),
             typeof(RockPaperScissorsField),
             typeof(RerollBoardField),
-            typeof(HeadsOrTailsField)
+            typeof(HeadsOrTailsField),
+            typeof(RubberbandField)
         };
 
         public static IField GetRandomField()
@@ -282,8 +283,6 @@ namespace SchnappsAndLiquor.Game
 
         public void Init(Game oGame, short shtPos)
         {
-            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(1, 3);
-
             var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
 
             shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
@@ -563,6 +562,48 @@ namespace SchnappsAndLiquor.Game
                     oGame.AddPointsToPlayer(sPlayer, 1);
                 }
             }
+        }
+    }
+
+    public class RubberbandField : IField
+    {
+        private List<(string sTextToUse, short shtMinRange, short shtMaxRange)> oReasons = new List<(string sTextToUse, short shtMinRange, short shtMaxRange)>()
+        {
+            ("Almosen für die Armen, hol den letzen Spieler zu dir, dafür muss er {0} trinken.",2,4)
+        };
+
+        public string sText { get; set; }
+        public short shtBoardPos { get; set; }
+        public bool bIsStartPoint { get; set; }
+        public bool bIsEndPoint { get; set; }
+
+        private short shtNumberToDrink;
+
+        public void Init(Game oGame, short shtPos)
+        {
+            var oReason = oReasons[GameParams.oRandomInstance.Next(oReasons.Count)];
+            shtBoardPos = shtPos;
+
+            sText = String.Format(oReason.sTextToUse, shtNumberToDrink);
+
+            shtNumberToDrink = (short)GameParams.oRandomInstance.Next(oReason.shtMinRange, oReason.shtMaxRange);
+        }
+
+        public (Choice oChoice, Action<Game, string> Callback) FieldAction(string sPlayerName, Game oGame)
+        {
+            return (null, ReturnAction);
+        }
+
+        public void ReturnAction(Game oGame, string sAnswer)
+        {
+            var oLastPlayer = oGame.oPlayers.Values.OrderBy(x => x.shtBoardPosition).First();
+
+            if (oLastPlayer == oGame.GetCurentPlayer())
+                return;
+
+            oLastPlayer.AddPoints(shtNumberToDrink);
+
+            oLastPlayer.MoveBy((short)(oGame.GetCurentPlayer().shtBoardPosition - oLastPlayer.shtBoardPosition));
         }
     }
 }
