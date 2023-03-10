@@ -12,7 +12,7 @@ RUN npm run build
 
 
 # BACKEND BUILDER CONTAINER
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-builder
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS backend-builder
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -27,7 +27,7 @@ RUN sed -i "s?../../../../Frontend/dist/saufen/?/app/saufen/?g" ./SchnappsAndLiq
     dotnet publish ./SchnappsAndLiquor.sln -o output --runtime linux-x64
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/runtime:6.0
+FROM mcr.microsoft.com/dotnet/runtime:7.0
 WORKDIR /app
 COPY --from=backend-builder /app/output .
 COPY --from=frontend-builder /app/dist/saufen ./saufen
